@@ -10,6 +10,7 @@ name = "pypi"
 fuzzywuzzy = {extras = ["speedup"]}
 "goose3" = "*"
 py-ms-cognitive = "*"
+ftfy = "*"
 
 
 [dev-packages]

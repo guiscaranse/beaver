@@ -3,6 +3,7 @@ import os
 from fuzzywuzzy import fuzz
 from goose3 import Goose
 from py_ms_cognitive import PyMsCognitiveNewsSearch
+from ftfy import fix_encoding
 
 from beaver.exceptions import BeaverError
 
@@ -10,7 +11,8 @@ settings = dict({'language': "pt-BR"})
 
 
 def extract(url):
-    g = Goose({'use_meta_language': True, 'target_language': settings['language'], 'parser_class': 'soup'})
+    g = Goose({'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"), 'parser_class': 'soup'})
+    print("Buscando: ", url)
     response = dict()
     artigo = g.extract(url=url)
     response['article_title'] = artigo.title
@@ -18,9 +20,15 @@ def extract(url):
     response['domain'] = artigo.domain
     response['date'] = artigo.publish_date
     if len(artigo.cleaned_text) > 0:
-        response['text'] = artigo.cleaned_text
+        text = fix_encoding(artigo.cleaned_text)
+        if "�" in text:
+            text = text.encode('latin-1', "ignore")
     else:
-        response['text'] = artigo.meta_description
+        text = fix_encoding(artigo.meta_description)
+        if "�" in text:
+            text = text.encode('latin-1', "ignore")
+    response['text'] = text
+    print(response)
     return response
 
 

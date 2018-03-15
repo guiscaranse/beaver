@@ -9,5 +9,3 @@ teste2 = beaver.post.extract("https://www.sensacionalista.com.br/2018/03/14/teme
                              "o-melhor-da-historia-do-brasil-e-deixa-humoristas-desempregados/")
 #print(teste2)
 beaver.post.search_relatives(teste1['article_title'])
-print("Testando 2")
-beaver.post.search_relatives(teste2['article_title'])
