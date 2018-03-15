@@ -8,4 +8,4 @@ print("Testando segundo...")
 teste2 = beaver.post.extract("https://www.sensacionalista.com.br/2018/03/14/temer-diz-que-seu-governo-pode-ser-"
                              "o-melhor-da-historia-do-brasil-e-deixa-humoristas-desempregados/")
 #print(teste2)
-beaver.post.search_relatives(teste1['article_title'])
+print(beaver.post.search_relatives(teste1['article_title']))
