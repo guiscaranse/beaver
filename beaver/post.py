@@ -1,8 +1,8 @@
 import os
 
+from fuzzywuzzy import fuzz
 from goose3 import Goose
 from py_ms_cognitive import PyMsCognitiveNewsSearch
-from fuzzywuzzy import fuzz, process
 
 from beaver.exceptions import BeaverError
 
