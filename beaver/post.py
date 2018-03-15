@@ -7,12 +7,12 @@ from ftfy import fix_encoding
 
 from beaver.exceptions import BeaverError
 
-settings = dict({'language': "pt-BR"})
+settings = dict({'language': "pt-BR", "replacement_charset": "latin1"})
 
 
 def extract(url):
-    g = Goose({'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"), 'parser_class': 'soup'})
-    print("Buscando: ", url)
+    g = Goose({'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"),
+               'parser_class': 'soup'})
     response = dict()
     artigo = g.extract(url=url)
     response['article_title'] = artigo.title
@@ -22,13 +22,12 @@ def extract(url):
     if len(artigo.cleaned_text) > 0:
         text = fix_encoding(artigo.cleaned_text)
         if "�" in text:
-            text = text.encode('latin-1', "ignore")
+            text = text.encode(settings['replacement_charset'], "ignore")
     else:
         text = fix_encoding(artigo.meta_description)
         if "�" in text:
-            text = text.encode('latin-1', "ignore")
+            text = text.encode(settings['replacement_charset'], "ignore")
     response['text'] = text
-    print(response)
     return response
 
 
