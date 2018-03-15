@@ -25,7 +25,6 @@ def extract(url):
 
 
 def search_relatives(query_str):
-    print("Buscando por:", query_str)
     if "MS_BING_KEY" not in os.environ:
         raise BeaverError("Chaves da Microsoft devem estar presentes na variável do sistema MS_BING_KEY")
     try:
@@ -33,5 +32,8 @@ def search_relatives(query_str):
             "mkt": settings['language'], "setLang": settings['language'][:2]}).search(limit=10, format='json')
     except Exception:
         raise BeaverError("Não foi possível se comunicar com o Bing, talvez as chaves tenham expirado?")
+    response = dict(relatives=[])
     for result in results:
-        print("Token_sort:", fuzz.token_sort_ratio(query_str, result.name))
+        if fuzz.token_sort_ratio(query_str, result.name) > 50:
+            response['relatives'].append(extract(result.url))
+    return response
