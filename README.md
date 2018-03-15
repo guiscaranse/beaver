@@ -17,7 +17,7 @@ pipenv install
 pipenv shell
 ```
 
-> É necessário definir a variável de ambiente `MS_BING_KEY` com uma chave gerada nos [Cognitive Services](https://azure.microsoft.com/en-us/services/cognitive-services/)
+> É necessário definir a variável de ambiente `MS_BING_KEY` com uma chave de busca gerada nos [Cognitive Services](https://azure.microsoft.com/en-us/services/cognitive-services/)
 
 
 É possível executar o arquivo de testes usando:
