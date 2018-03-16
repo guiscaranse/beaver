@@ -11,6 +11,11 @@ settings = dict({'language': "pt-BR", "replacement_charset": "latin1"})
 
 
 def fixcharset(string):
+    """
+    Tenta consertar uma string em relação a codificação do texto de múltiplas maneiras
+    :param string: texto a ser consertado
+    :return: texto consertado
+    """
     text = fix_encoding(string)
     if "�" in text:
         text = text.encode(settings['replacement_charset'], "ignore")
@@ -18,6 +23,12 @@ def fixcharset(string):
 
 
 def extract(url):
+    """
+    Extrai de uma URL qualquer dados de uma postagem
+    :param url: link a ser extraído (necessita ser uma postagem)
+    :return: um objeto dicionário com título do artigo, autor, domínio, data e texto do artigo
+    Na ausência do texto do artigo irá ser utilizado o resumo presente na meta_description
+    """
     g = Goose({'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"),
                'parser_class': 'soup'})
     response = dict()
@@ -35,6 +46,12 @@ def extract(url):
 
 
 def search_relatives(query_str):
+    """
+    Procura no Bing, posts similares com >50 de pontuação no token_sort_ratio limitado a 10 resultados
+    :param query_str: conteúdo a ser buscado (Pode ser um título ou o conteúdo da postagem)
+    :return: dicionário com um dicionário onde 'relatives' é uma array dos dados dos posts similares, e 'score' é uma
+    média do token_sort_ratio dos resultados similares.
+    """
     rel_response = dict(relatives=[])
     meta_score = 0
     if "MS_BING_KEY" not in os.environ:
