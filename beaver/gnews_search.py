@@ -26,11 +26,14 @@ def search_relatives(string):
     with urllib.request.urlopen(json_data) as url:
         data = json.loads(url.read().decode())
         for item in data['items']:
-            if fuzz.token_sort_ratio(string, data['title']) > 50:
-                meta_score += fuzz.token_sort_ratio(string, data['title'])
-                dados = extract(item['link'])
-                dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
-                gnews_results['relatives'].append(dados)
+            if fuzz.token_sort_ratio(string, item['title']) > 50:
+                meta_score += fuzz.token_sort_ratio(string, item['title'])
+                try:
+                    dados = extract(item['link'])
+                    dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
+                    gnews_results['relatives'].append(dados)
+                except Exception:
+                    pass
     if meta_score > 0:
         gnews_results['score'] = meta_score / len(gnews_results['relatives'])
     else:
