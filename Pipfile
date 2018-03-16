@@ -11,6 +11,7 @@ fuzzywuzzy = {extras = ["speedup"]}
 "goose3" = "*"
 py-ms-cognitive = "*"
 ftfy = "*"
+pendulum = "*"
 
 
 [dev-packages]

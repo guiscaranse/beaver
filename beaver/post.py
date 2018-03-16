@@ -1,12 +1,13 @@
 import os
 
+import pendulum
 from ftfy import fix_encoding
 from fuzzywuzzy import fuzz
 from goose3 import Goose
 from py_ms_cognitive import PyMsCognitiveNewsSearch
 
-from beaver.exceptions import BeaverError
 from beaver.config import settings
+from beaver.exceptions import BeaverError
 
 
 def fixcharset(string):
@@ -35,7 +36,10 @@ def extract(url):
     response['article_title'] = fixcharset(artigo.title)
     response['author'] = artigo.authors
     response['domain'] = artigo.domain
-    response['date'] = artigo.publish_date
+    if artigo.publish_date is not None:
+        response['date'] = pendulum.parse(artigo.publish_date, tz=settings['timezone'])
+    else:
+        response['date'] = artigo.publish_date
     if len(artigo.cleaned_text) > 0:
         text = fixcharset(artigo.cleaned_text)
     else:
@@ -63,7 +67,10 @@ def search_relatives(query_str):
     for result in results:
         if fuzz.token_sort_ratio(query_str, result.name) > 50:
             meta_score += fuzz.token_sort_ratio(query_str, result.name)
-            rel_response['relatives'].append(extract(result.url))
+            dados = extract(result.url)
+            if dados['date'] is None:
+                dados['date'] = pendulum.parse(result.date_published, tz=settings['timezone'])
+            rel_response['relatives'].append(dados)
     if meta_score > 0:
         rel_response['score'] = meta_score / len(rel_response['relatives'])
     else:
