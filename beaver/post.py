@@ -49,8 +49,8 @@ def search_relatives(query_str):
     """
     Procura no Bing, posts similares com >50 de pontuação no token_sort_ratio limitado a 10 resultados
     :param query_str: conteúdo a ser buscado (Pode ser um título ou o conteúdo da postagem)
-    :return: dicionário com um dicionário onde 'relatives' é uma array dos dados dos posts similares, e 'score' é uma
-    média do token_sort_ratio dos resultados similares.
+    :return: dicionário com um dicionário onde 'relatives' é uma array de dicionários dos dados dos posts similares,
+    e 'score' é uma média do token_sort_ratio dos resultados similares.
     """
     rel_response = dict(relatives=[])
     meta_score = 0
