@@ -1,1 +1,1 @@
-from beaver import post, gnews_search
+from beaver import analyse

@@ -13,6 +13,7 @@ py-ms-cognitive = "*"
 ftfy = "*"
 pendulum = "*"
 pytrends = "*"
+nltk = "*"
 
 
 [dev-packages]
