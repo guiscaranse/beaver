@@ -2,7 +2,7 @@
 
 *Extração e análise de artigos da internet*
 
-[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/Chococandy/pycandy/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/guiscaranse/beaver/blob/master/LICENSE)
 
 ***
 ## Instalando
