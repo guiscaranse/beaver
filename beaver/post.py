@@ -1,13 +1,8 @@
-import os
-
 import pendulum
 from ftfy import fix_encoding
-from fuzzywuzzy import fuzz
 from goose3 import Goose
-from py_ms_cognitive import PyMsCognitiveNewsSearch
 
 from beaver.config import settings
-from beaver.exceptions import BeaverError
 
 
 def fixcharset(string):

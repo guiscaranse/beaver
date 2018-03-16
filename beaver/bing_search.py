@@ -27,8 +27,7 @@ def search_relatives(query_str):
         if fuzz.token_sort_ratio(query_str, result.name) > 50:
             meta_score += fuzz.token_sort_ratio(query_str, result.name)
             dados = extract(result.url)
-            if dados['date'] is None:
-                dados['date'] = pendulum.parse(result.date_published, tz=settings['timezone'])
+            dados['date'] = pendulum.parse(dados['date'], tz=settings['timezone'])
             rel_response['relatives'].append(dados)
     if meta_score > 0:
         rel_response['score'] = meta_score / len(rel_response['relatives'])
