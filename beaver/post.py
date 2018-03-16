@@ -6,8 +6,7 @@ from goose3 import Goose
 from py_ms_cognitive import PyMsCognitiveNewsSearch
 
 from beaver.exceptions import BeaverError
-
-settings = dict({'language': "pt-BR", "replacement_charset": "latin1"})
+from beaver.config import settings
 
 
 def fixcharset(string):
