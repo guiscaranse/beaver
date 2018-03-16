@@ -12,6 +12,7 @@ fuzzywuzzy = {extras = ["speedup"]}
 py-ms-cognitive = "*"
 ftfy = "*"
 pendulum = "*"
+pytrends = "*"
 
 
 [dev-packages]
