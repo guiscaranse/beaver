@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5d6f715c7d0f5713815ad315ddbc73d1b21f6cc55d2f3e779b26a30f7ef85cf4"
+            "sha256": "830d06dbae7d9d1bc246cedfe4d3cacca8a5f3a2c4fd3d62e2689db8c44f9e48"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -231,11 +231,8 @@
             "version": "==5.0.0"
         },
         "py-ms-cognitive": {
-            "hashes": [
-                "sha256:adadc8625fcbeff5ef6f3d5cae6de55653b3627330f0adc526e6cc23d78f74b3"
-            ],
-            "index": "pypi",
-            "version": "==0.4.0"
+            "git": "https://github.com/guiscaranse/py-ms-cognitive.git",
+            "ref": "master"
         },
         "python-dateutil": {
             "hashes": [

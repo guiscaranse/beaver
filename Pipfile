@@ -9,11 +9,11 @@ name = "pypi"
 
 fuzzywuzzy = {extras = ["speedup"]}
 "goose3" = "*"
-py-ms-cognitive = "*"
 ftfy = "*"
 pendulum = "*"
 pytrends = "*"
 nltk = "*"
+py-ms-cognitive = {git = "https://github.com/guiscaranse/py-ms-cognitive.git", ref = "master"}
 
 
 [dev-packages]
