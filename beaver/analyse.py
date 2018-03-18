@@ -6,6 +6,12 @@ from beaver.config import settings
 
 
 def alltext_score(all_text):
+    """
+    Esta função analisa a escrita de um texto utilizando o NLTK, permitindo obter palavras-chave de um texto. Após isso
+    ele busca algumas palavras chaves formando frases nos veículos de notícias e extraindo a pontuação deles.
+    :param all_text: Texto a ser analisado
+    :return: Frase "popular" em formato de lista
+    """
     try:
         nltk.data.find('corpora\stopwords')
     except LookupError:
@@ -28,6 +34,11 @@ def alltext_score(all_text):
 
 
 def score(url):
+    """
+    Analisa a pontuação de uma notícia, sendo a pontuação a probabilidade desta ser falsa ou não
+    :param url: link a ser analisado
+    :return: retorna um dicionário com as respectivas pontuações em cada categoria
+    """
     final_score = dict()
     postagem = post.extract(url)
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
