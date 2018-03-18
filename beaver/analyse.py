@@ -38,13 +38,12 @@ def score(url):
     for news in bing_relatives['relatives']:
         try:
             all_text += post.fixcharset(str(news['text'], "utf8"))
-        except Exception: # Ignora textos que não puderam ser entendidos
-            print("Não foi possível adicionar um texto para análise")
+        except Exception:  # Ignora textos que não puderam ser entendidos
             pass
     for news in gnews_relatives['relatives']:
         try:
             all_text += post.fixcharset(str(news['text'], "utf8"))
-        except Exception: # Ignora textos que não puderam ser entendidos
+        except Exception:  # Ignora textos que não puderam ser entendidos
             pass
     popular_words = ' '.join(alltext_score(all_text))
     if len(popular_words) > 0:
