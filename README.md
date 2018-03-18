@@ -24,3 +24,8 @@ pipenv shell
 ```sh
 python run.py
 ```
+
+É possível rodar testes personalizados utilizando o exemplo abaixo:
+```sh
+python run.py https://www.sensacionalista.com.br/2018/03/14/temer-diz-que-seu-governo-pode-ser-o-melhor-da-historia-do-brasil-e-deixa-humoristas-desempregados/
+```
