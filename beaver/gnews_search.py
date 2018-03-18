@@ -28,7 +28,7 @@ def search_relatives(string):
         for item in data['items']:
             if fuzz.token_sort_ratio(string, item['title']) > 50:
                 meta_score += fuzz.token_sort_ratio(string, item['title'])
-                try:
+                try:  # Em caso de erros do Goose, não são relevantes quais (Variam de 404 e 500)
                     dados = extract(item['link'])
                     dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
                     gnews_results['relatives'].append(dados)

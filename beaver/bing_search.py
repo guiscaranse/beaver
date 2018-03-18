@@ -1,4 +1,5 @@
 import os
+
 import pendulum
 from fuzzywuzzy import fuzz
 from py_ms_cognitive import PyMsCognitiveNewsSearch
@@ -26,10 +27,13 @@ def search_relatives(query_str):
         raise BeaverError("Não foi possível se comunicar com o Bing, talvez as chaves tenham expirado?")
     for result in results:
         if fuzz.token_sort_ratio(query_str, result.name) > 50:
-            meta_score += fuzz.token_sort_ratio(query_str, result.name)
-            dados = extract(result.url)
-            dados['date'] = pendulum.parse(result.date_published, tz=settings['timezone'])
-            rel_response['relatives'].append(dados)
+            try:  # Em caso de erros do Goose, não são relevantes quais (Variam de 404 e 500)
+                meta_score += fuzz.token_sort_ratio(query_str, result.name)
+                dados = extract(result.url)
+                dados['date'] = pendulum.parse(result.date_published, tz=settings['timezone'])
+                rel_response['relatives'].append(dados)
+            except Exception:
+                pass
     if meta_score > 0:
         rel_response['score'] = meta_score / len(rel_response['relatives'])
     else:
