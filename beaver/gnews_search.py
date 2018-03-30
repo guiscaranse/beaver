@@ -25,15 +25,16 @@ def search_relatives(string):
     json_data = "https://api.rss2json.com/v1/api.json?rss_url=" + urllib.parse.quote_plus(feed)
     with urllib.request.urlopen(json_data) as url:
         data = json.loads(url.read().decode())
-        for item in data['items']:
-            if fuzz.token_sort_ratio(string, item['title']) > 50:
-                meta_score += fuzz.token_sort_ratio(string, item['title'])
-                try:  # Em caso de erros do Goose, não são relevantes quais (Variam de 404 e 500)
-                    dados = extract(item['link'])
-                    dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
-                    gnews_results['relatives'].append(dados)
-                except Exception:
-                    pass
+        if "items" in data:
+            for item in data['items']:
+                if fuzz.token_sort_ratio(string, item['title']) > 50:
+                    meta_score += fuzz.token_sort_ratio(string, item['title'])
+                    try:  # Em caso de erros do Goose, não são relevantes quais (Variam de 404 e 500)
+                        dados = extract(item['link'])
+                        dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
+                        gnews_results['relatives'].append(dados)
+                    except Exception:
+                        pass
     if meta_score > 0:
         gnews_results['score'] = meta_score / len(gnews_results['relatives'])
     else:
