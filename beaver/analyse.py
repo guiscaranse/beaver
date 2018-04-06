@@ -41,7 +41,6 @@ def score(url):
     """
     final_score = dict()
     postagem = post.extract(url)
-    print("Detectado:", postagem['article_title'])
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
     final_score['bing'] = bing_relatives['score']

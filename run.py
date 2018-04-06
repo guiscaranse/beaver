@@ -2,6 +2,8 @@ import sys
 
 import beaver
 
+print(beaver.magiceye.magic(sys.argv[1]))
+'''
 if len(sys.argv) == 1:
     # Verdade
     teste1 = beaver.analyse.score("https://g1.globo.com/rj/rio-de-janeiro/noticia/policia-acredita-que-assassinos-da"
@@ -19,3 +21,4 @@ if len(sys.argv) == 1:
 else:
     print("Analisando: ", sys.argv[1])
     print(beaver.analyse.score(sys.argv[1]))
+'''

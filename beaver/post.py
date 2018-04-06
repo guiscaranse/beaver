@@ -24,8 +24,8 @@ def extract(url):
     :return: um objeto dicionário com título do artigo, autor, domínio, data e texto do artigo
     Na ausência do texto do artigo irá ser utilizado o resumo presente na meta_description
     """
-    g = Goose({'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"),
-               'parser_class': 'soup'})
+    g = Goose({'strict': False, 'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"),
+               'parser_class': 'soup', 'enable_image_fetching': False})
     response = dict()
     artigo = g.extract(url=url)
     response['article_title'] = fixcharset(artigo.title)

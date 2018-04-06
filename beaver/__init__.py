@@ -1,1 +1,1 @@
-from beaver import analyse
+from beaver import magiceye
