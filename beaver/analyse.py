@@ -2,7 +2,7 @@ import nltk
 from nltk.corpus import stopwords
 
 from beaver import post, bing_search, gnews_search
-from beaver.config import settings
+from beaver.config import settings, weights
 
 
 def alltext_score(all_text):
@@ -43,8 +43,8 @@ def score(url):
     postagem = post.extract(url)
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
-    final_score['bing'] = bing_relatives['score']
-    final_score['google'] = gnews_relatives['score']
+    final_score['bing'] = bing_relatives['score'] * weights['bing']
+    final_score['google'] = gnews_relatives['score'] * weights['google']
     all_text = ""
     for news in bing_relatives['relatives']:
         try:
@@ -60,8 +60,8 @@ def score(url):
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
         popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
-        final_score['popular_bing'] = popular_words_bing_relatives
-        final_score['popular_google'] = popular_words_gnews_relatives
+        final_score['popular_bing'] = popular_words_bing_relatives * weights['popular_bing']
+        final_score['popular_google'] = popular_words_gnews_relatives * weights['popular_google']
     else:
         final_score['popular_bing'] = 0
         final_score['popular_google'] = 0

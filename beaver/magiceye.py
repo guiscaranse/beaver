@@ -1,3 +1,6 @@
+import os
+
+import sys
 from halo import Halo
 
 from beaver.analyse import score
@@ -7,6 +10,9 @@ from beaver.config import score_table
 def magic(url):
     with Halo(text='Analisando noticias... Isto pode levar um tempo', spinner='dots') as halo:
         try:
+            # Desativa uns erros de encoding chatos
+            sys.stdout = os.devnull
+            sys.stderr = os.devnull
             pontuacao = score(url)
             halo.succeed("Terminado análise, computando pontuação...")
             if score_table['tc'] <= float(pontuacao['truth_score']) < score_table['safe']:
