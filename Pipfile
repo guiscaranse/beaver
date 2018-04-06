@@ -15,6 +15,7 @@ pytrends = "*"
 nltk = "*"
 py-ms-cognitive = {git = "https://github.com/guiscaranse/py-ms-cognitive.git", ref = "master"}
 pickledb = "*"
+halo = "*"
 
 
 [dev-packages]

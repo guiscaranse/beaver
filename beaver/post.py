@@ -25,7 +25,7 @@ def extract(url):
     Na ausência do texto do artigo irá ser utilizado o resumo presente na meta_description
     """
     g = Goose({'strict': False, 'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"),
-               'parser_class': 'soup', 'enable_image_fetching': False})
+               'parser_class': 'lxml', 'enable_image_fetching': False})
     response = dict()
     artigo = g.extract(url=url)
     response['article_title'] = fixcharset(artigo.title)
