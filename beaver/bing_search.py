@@ -9,9 +9,10 @@ from beaver.exceptions import BeaverError
 from beaver.post import extract
 
 
-def search_relatives(query_str):
+def search_relatives(query_str, ignore_url=""):
     """
     Procura no Bing, posts similares com >50 de pontuação no token_sort_ratio limitado a 10 resultados
+    :param ignore_url: URL para ignorar notícias
     :param query_str: conteúdo a ser buscado (Pode ser um título ou o conteúdo da postagem)
     :return: dicionário com um dicionário onde 'relatives' é uma array de dicionários dos dados dos posts similares,
     e 'score' é uma média do token_sort_ratio dos resultados similares.
@@ -28,10 +29,11 @@ def search_relatives(query_str):
     for result in results:
         if fuzz.token_sort_ratio(query_str, result.name) > 50:
             try:  # Em caso de erros do Goose, não são relevantes quais (Variam de 404 e 500)
-                meta_score += fuzz.token_sort_ratio(query_str, result.name)
-                dados = extract(result.url)
-                dados['date'] = pendulum.parse(result.date_published, tz=settings['timezone'])
-                rel_response['relatives'].append(dados)
+                if ignore_url not in result.url:
+                    meta_score += fuzz.token_sort_ratio(query_str, result.name)
+                    dados = extract(result.url)
+                    dados['date'] = pendulum.parse(result.date_published, tz=settings['timezone'])
+                    rel_response['relatives'].append(dados)
             except Exception:
                 pass
     if meta_score > 0:

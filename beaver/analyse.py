@@ -43,7 +43,7 @@ def score(url):
     postagem = post.extract(url)
     print("Detectado:", postagem['article_title'])
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
-    gnews_relatives = gnews_search.search_relatives(postagem['article_title'])
+    gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
     final_score['bing'] = bing_relatives['score']
     final_score['google'] = gnews_relatives['score']
     all_text = ""
@@ -59,8 +59,8 @@ def score(url):
             pass
     popular_words = ' '.join(alltext_score(all_text))
     if len(popular_words) > 0:
-        popular_words_gnews_relatives = gnews_search.search_relatives(popular_words)['score']
-        popular_words_bing_relatives = bing_search.search_relatives(popular_words)['score']
+        popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
+        popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
         final_score['popular_bing'] = popular_words_bing_relatives
         final_score['popular_google'] = popular_words_gnews_relatives
     else:
