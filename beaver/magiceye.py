@@ -1,6 +1,8 @@
 from halo import Halo
+
 from beaver.analyse import score
 from beaver.config import score_table
+
 
 def magic(url):
     with Halo(text='Analisando noticias... Isto pode levar um tempo', spinner='dots') as halo:
@@ -18,4 +20,3 @@ def magic(url):
                              str(round(pontuacao['truth_score'], 2)))
         except Exception as e:
             halo.fail("Ocorreu um erro e não foi possível continuar (Erro: " + str(e) + ")")
-
