@@ -48,13 +48,16 @@ def score(url):
     final_score['google'] = gnews_relatives['score']
     all_text = ""
     for news in bing_relatives['relatives']:
+
+        all_text += post.fixcharset(str(news['text']))
         try:
-            all_text += post.fixcharset(str(news['text'], "utf8"))
+            all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
             pass
     for news in gnews_relatives['relatives']:
+        all_text += post.fixcharset(str(news['text']))
         try:
-            all_text += post.fixcharset(str(news['text'], "utf8"))
+            all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
             pass
     popular_words = ' '.join(alltext_score(all_text))
