@@ -8,12 +8,12 @@ settings = {
 
 score_table = {
     'tc': 10,
-    'safe': 20,
+    'safe': 15,
     'unsafe': 0
 }
 
 weights = {
-    'google': 2,
+    'google': 1,
     'bing': 1,
     'popular_bing': 1,
     'popular_google': 2
