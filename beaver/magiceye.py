@@ -22,7 +22,7 @@ def magic(url):
                 halo.warn("Esta notícia é segura mas possivelmente tendenciosa! E obteve pontuação " +
                           str(round(pontuacao['truth_score'], 2)))
             elif float(pontuacao['truth_score']) < score_table['tc']:
-                halo.fail("Esta notícia foi marcada como falsa, tedenciosa ou clickbait. E obteve pontuação " +
+                halo.fail("Esta notícia foi marcada como falsa, tendenciosa ou clickbait. E obteve pontuação " +
                           str(round(pontuacao['truth_score'], 2)))
             else:
                 halo.succeed("Esta notícia foi marcada como segura. E possui pontuação " +
