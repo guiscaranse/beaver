@@ -1,8 +1,25 @@
 import nltk
+import pendulum
 from nltk.corpus import stopwords
 
 from beaver import post, bing_search, gnews_search
 from beaver.config import settings, weights
+from beaver.exceptions import TimeError
+
+
+def validate(gooseobject, ignore):
+    """
+    Valida algumas informações da notícia sendo analisada. Reservar esta área para definir regras
+    :param gooseobject: objeto beaver.post
+    :param ignore: ignorar validações
+    """
+    # Verifica data
+    if gooseobject['date'] is not None:
+        diff = pendulum.now() - gooseobject['date']
+        if diff.years > 0:
+            if not ignore:
+                raise TimeError("Artigos de mais de um ano podem causar análises errôneas, digite --help para saber "
+                                "como forçar análise.")
 
 
 def alltext_score(all_text):
@@ -33,14 +50,16 @@ def alltext_score(all_text):
         return list(fd.keys())[:max_words]
 
 
-def score(url):
+def score(url, ignore=False):
     """
     Analisa a pontuação de uma notícia, sendo a pontuação a probabilidade desta ser falsa ou não
+    :param ignore: Se deve ignorar validações
     :param url: link a ser analisado
     :return: retorna um dicionário com as respectivas pontuações em cada categoria
     """
     final_score = dict()
     postagem = post.extract(url)
+    validate(postagem, ignore)
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
     final_score['bing'] = bing_relatives['score'] * weights['bing']

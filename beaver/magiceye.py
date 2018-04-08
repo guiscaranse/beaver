@@ -1,11 +1,12 @@
 import os
-
 import sys
+
 from halo import Halo
 
 from beaver.analyse import score
 from beaver.config import score_table
 from beaver.post import extract
+
 
 def magic(url):
     with Halo(text='Analisando noticias... Isto pode levar um tempo', spinner='dots') as halo:
