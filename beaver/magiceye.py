@@ -19,14 +19,36 @@ def magic(url):
             halo.start("Extraindo e analisando dados...")
             pontuacao = score(url)
             halo.succeed("Terminado análise, computando pontuação...")
-            if score_table['tc'] <= float(pontuacao['truth_score']) < score_table['safe']:
+            # Pontuação do domínio
+            if pontuacao['domain_score']['score_safe'] == 0 and pontuacao['domain_score']['score_td'] == 0 and \
+                    pontuacao['domain_score']['score_unsafe'] == 0:
+                halo.info("Este domínio não foi analisado anteriormente.")
+            elif pontuacao['domain_score']['score_safe'] < float(pontuacao['domain_score']['score_td']) > \
+                    pontuacao['domain']['score_unsafe']:
+                halo.warn("Este veículo é seguro mas possivelmente tendenciosa! Pontuação de notícias tendenciosas: " +
+                          str(round(pontuacao['domain_score']['score_td'], 2)))
+            elif pontuacao['domain_score']['score_td'] < float(pontuacao['domain_score']['score_unsafe']) > \
+                    pontuacao['domain_score']['score_safe']:
+                halo.fail("Este veículo costuma disseminar notícias falsas! Pontuação de notícias falsas: " +
+                          str(round(pontuacao['domain_score']['score_unsafe'], 2)))
+            else:
+                halo.succeed("Este veículo foi marcado como seguro. Pontuação de notícias verdadeiras: " +
+                             str(round(pontuacao['domain_score']['score_safe'], 2)))
+
+            # Pontuação da Postagem
+            if score_table['tc'] <= float(pontuacao['post']['truth_score']) < score_table['safe']:
                 halo.warn("Esta notícia é segura mas possivelmente tendenciosa! E obteve pontuação " +
-                          str(round(pontuacao['truth_score'], 2)))
-            elif float(pontuacao['truth_score']) < score_table['tc']:
-                halo.fail("Esta notícia foi marcada como falsa, tendenciosa ou clickbait. E obteve pontuação " +
-                          str(round(pontuacao['truth_score'], 2)))
+                          str(round(pontuacao['post']['truth_score'], 2)))
+            elif float(pontuacao['post']['truth_score']) < score_table['tc']:
+                halo.fail("Esta notícia foi marcada como falsa ou clickbait. E obteve pontuação " +
+                          str(round(pontuacao['post']['truth_score'], 2)))
             else:
                 halo.succeed("Esta notícia foi marcada como segura. E possui pontuação " +
-                             str(round(pontuacao['truth_score'], 2)))
+                             str(round(pontuacao['post']['truth_score'], 2)))
         except Exception as e:
             halo.fail("Ocorreu um erro e não foi possível continuar (Erro: " + str(e) + ")")
+
+
+def debug(url):
+    print(extract(url)['article_title'])
+    print(score(url))
