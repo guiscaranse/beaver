@@ -2,12 +2,13 @@ import nltk
 import pendulum
 from nltk.corpus import stopwords
 
+import beaver.database
 from beaver import post, bing_search, gnews_search
 from beaver.config import settings, weights
 from beaver.exceptions import TimeError
 
 
-def validate(gooseobject, ignore):
+def validate(gooseobject: dict, ignore: bool) -> bool:
     """
     Valida algumas informações da notícia sendo analisada. Reservar esta área para definir regras
     :param gooseobject: objeto beaver.post
@@ -20,9 +21,10 @@ def validate(gooseobject, ignore):
             if not ignore:
                 raise TimeError("Artigos de mais de um ano podem causar análises errôneas, digite --help para saber "
                                 "como forçar análise.")
+    return True
 
 
-def alltext_score(all_text):
+def alltext_score(all_text: str) -> list:
     """
     Esta função analisa a escrita de um texto utilizando o NLTK, permitindo obter palavras-chave de um texto. Após isso
     ele busca algumas palavras chaves formando frases nos veículos de notícias e extraindo a pontuação deles.
@@ -50,20 +52,26 @@ def alltext_score(all_text):
         return list(fd.keys())[:max_words]
 
 
-def score(url, ignore=False):
+def score(url: str, ignore: bool = False) -> dict:
     """
     Analisa a pontuação de uma notícia, sendo a pontuação a probabilidade desta ser falsa ou não
     :param ignore: Se deve ignorar validações
     :param url: link a ser analisado
     :return: retorna um dicionário com as respectivas pontuações em cada categoria
+    O dicionário é dividido em 'domain' (pontuações do domínio) e 'post' (pontuações da notícia)
     """
-    final_score = dict()
+    final_score = dict(domain_score={}, post={})
     postagem = post.extract(url)
+    if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])):
+        objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
+        objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
+        return objeto
     validate(postagem, ignore)
+    final_score['domain_score'] = beaver.database.checkdomains(postagem['domain'])
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
-    final_score['bing'] = bing_relatives['score'] * weights['bing']
-    final_score['google'] = gnews_relatives['score'] * weights['google']
+    final_score['post']['bing'] = bing_relatives['score'] * weights['bing']
+    final_score['post']['google'] = gnews_relatives['score'] * weights['google']
     all_text = ""
     for news in bing_relatives['relatives']:
         try:
@@ -79,10 +87,11 @@ def score(url, ignore=False):
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
         popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
-        final_score['popular_bing'] = popular_words_bing_relatives * weights['popular_bing']
-        final_score['popular_google'] = popular_words_gnews_relatives * weights['popular_google']
+        final_score['post']['popular_bing'] = popular_words_bing_relatives * weights['popular_bing']
+        final_score['post']['popular_google'] = popular_words_gnews_relatives * weights['popular_google']
     else:
-        final_score['popular_bing'] = 0
-        final_score['popular_google'] = 0
-    final_score['truth_score'] = sum(final_score.values()) / float(len(final_score))
+        final_score['post']['popular_bing'] = 0
+        final_score['post']['popular_google'] = 0
+    final_score['post']['truth_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
+    beaver.database.registerpost(postagem, final_score)
     return final_score
