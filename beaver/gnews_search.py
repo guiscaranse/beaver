@@ -3,14 +3,16 @@ import sys
 import urllib.parse
 import urllib.request
 
+import os
 import pendulum
 from fuzzywuzzy import fuzz
 from logbook import Logger, StreamHandler
 
 from beaver.config import settings
-from beaver.post import extract, fixcharset
+from beaver.post import extract
 
-StreamHandler(sys.stdout).push_application()
+if "BEAVER_DEBUG" in os.environ:
+    StreamHandler(sys.stdout).push_application()
 log = Logger('GNews')
 
 

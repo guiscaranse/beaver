@@ -10,7 +10,8 @@ from beaver.config import settings
 from beaver.exceptions import BeaverError
 from beaver.post import extract
 
-StreamHandler(sys.stdout).push_application()
+if "BEAVER_DEBUG" in os.environ:
+    StreamHandler(sys.stdout).push_application()
 log = Logger('Bing')
 
 
