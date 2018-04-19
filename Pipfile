@@ -16,6 +16,7 @@ nltk = "*"
 py-ms-cognitive = {git = "https://github.com/guiscaranse/py-ms-cognitive.git", ref = "master"}
 halo = "*"
 tinydb = "*"
+logbook = "*"
 
 
 [dev-packages]

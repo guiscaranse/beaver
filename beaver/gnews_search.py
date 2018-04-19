@@ -1,12 +1,17 @@
 import json
+import sys
 import urllib.parse
 import urllib.request
 
 import pendulum
 from fuzzywuzzy import fuzz
+from logbook import Logger, StreamHandler
 
 from beaver.config import settings
-from beaver.post import extract
+from beaver.post import extract, fixcharset
+
+StreamHandler(sys.stdout).push_application()
+log = Logger('GNews')
 
 
 def search_relatives(string, ignore_url=""):
@@ -25,11 +30,15 @@ def search_relatives(string, ignore_url=""):
 
     json_data = "https://noderssserver-gcakilmtyk.now.sh/?feedURL=" + urllib.parse.quote_plus(feed)
     with urllib.request.urlopen(json_data) as url:
+        log.info("Verificando: " + json_data)
         data = json.loads(url.read().decode())
         if "items" in data:
+            log.info("Encontrado correspondências no Google News. Itens: " + str(len(data)))
+            log.info(str(data))
             for item in data['items']:
                 try:
                     dados = None
+                    log.info("Encontrado: " + str(fuzz.token_sort_ratio(string, item['title'])))
                     if fuzz.token_sort_ratio(string, item['title']) > 50:
                         if 'link' in item.keys():
                             if ignore_url in item['link']:
@@ -47,7 +56,8 @@ def search_relatives(string, ignore_url=""):
                             dados['date'] = pendulum.parse(item['created'], tz=settings['timezone'])
                         else:
                             dados['date'] = None
-                except Exception:
+                except Exception as e:
+                    log.error("Erro: " + str(e))
                     pass
                 finally:
                     if dados is not None:
