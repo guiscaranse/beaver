@@ -52,9 +52,10 @@ def alltext_score(all_text: str) -> list:
         return list(fd.keys())[:max_words]
 
 
-def score(url: str, ignore: bool = False) -> dict:
+def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
     """
     Analisa a pontuação de uma notícia, sendo a pontuação a probabilidade desta ser falsa ou não
+    :param force_db: Se deve ignorar a existência do banco de dados
     :param ignore: Se deve ignorar validações
     :param url: link a ser analisado
     :return: retorna um dicionário com as respectivas pontuações em cada categoria
@@ -62,10 +63,11 @@ def score(url: str, ignore: bool = False) -> dict:
     """
     final_score = dict(domain_score={}, post={})
     postagem = post.extract(url)
-    if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])):
-        objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
-        objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
-        return objeto
+    if not ignore:
+        if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])):
+            objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
+            objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
+            return objeto
     validate(postagem, ignore)
     final_score['domain_score'] = beaver.database.checkdomains(postagem['domain'])
     bing_relatives = bing_search.search_relatives(postagem['article_title'])
@@ -93,5 +95,6 @@ def score(url: str, ignore: bool = False) -> dict:
         final_score['post']['popular_bing'] = 0
         final_score['post']['popular_google'] = 0
     final_score['post']['truth_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
-    beaver.database.registerpost(postagem, final_score)
+    if not ignore:
+        beaver.database.registerpost(postagem, final_score)
     return final_score
