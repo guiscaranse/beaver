@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e0928e5e9c654bcbac8994f4f73ca854c22bf5e20dbddfcf50a3751a37c365ba"
+            "sha256": "ce001fd192b51d198432cba8961b18e2ad9fc90f6b36277762433cef05d2ba83"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,12 @@
         ]
     },
     "default": {
+        "3486be2": {
+            "path": ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"
+        },
+        "653ecd9": {
+            "path": ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"
+        },
         "backports.shutil-get-terminal-size": {
             "hashes": [
                 "sha256:0975ba55054c15e346944b38956a4c9cbee9009391e41b86c68990effb8c1f64",
@@ -289,6 +295,9 @@
             ],
             "version": "==5.1.0"
         },
+        "polyglot": {
+            "git": "https://github.com/aboSamoor/polyglot.git"
+        },
         "py-ms-cognitive": {
             "git": "https://github.com/guiscaranse/py-ms-cognitive.git",
             "ref": "master"
@@ -355,11 +364,11 @@
         },
         "tinydb": {
             "hashes": [
-                "sha256:961d7fbeb09843251b8a016965269c2fb0e898f16e8686bcf40e23d385219d78",
-                "sha256:ea531ad7ab69dc043451440b8637680a14d5c1711259efd5682277cfa49f2112"
+                "sha256:67b3b302fc86e0139db545d5abd65bf0e1dadaecee63bd1ff3fe2169810d5387",
+                "sha256:e7d939c52710ee4354bb619b9bed05ae6192645f1520f13d8fcf4f06b5590e02"
             ],
             "index": "pypi",
-            "version": "==3.8.1.post1"
+            "version": "==3.9.0"
         },
         "tzlocal": {
             "hashes": [
