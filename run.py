@@ -14,4 +14,4 @@ if len(sys.argv) == 1:
     # Falsa
     beaver.magiceye.magic("http://www.socialistamorena.com.br/as-129-mulheres-que-morreram/")
 else:
-    beaver.magiceye.magic(sys.argv[1])
+    beaver.magiceye.debug(sys.argv[1])
