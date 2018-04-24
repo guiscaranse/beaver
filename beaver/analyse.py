@@ -3,7 +3,7 @@ import pendulum
 from nltk.corpus import stopwords
 
 import beaver.database
-from beaver import post, bing_search, gnews_search
+from beaver import post, bing_search, gnews_search, lumberjack
 from beaver.config import settings, weights
 from beaver.exceptions import TimeError
 
@@ -61,9 +61,11 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
     :return: retorna um dicionário com as respectivas pontuações em cada categoria
     O dicionário é dividido em 'domain' (pontuações do domínio) e 'post' (pontuações da notícia)
     """
-    final_score = dict(domain_score={}, post={})
+    final_score = dict(domain_score={}, post={}, polyglot={})
     postagem = post.extract(url)
-    if not ignore:
+    final_score['polyglot'] = dict(grammar=lumberjack.gramatica(postagem['text']),
+                                   polarity=lumberjack.polaridade(postagem['text']))
+    if not force_db:
         if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])):
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
@@ -95,6 +97,6 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
         final_score['post']['popular_bing'] = 0
         final_score['post']['popular_google'] = 0
     final_score['post']['truth_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
-    if not ignore:
+    if not force_db:
         beaver.database.registerpost(postagem, final_score)
     return final_score

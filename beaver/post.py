@@ -1,20 +1,8 @@
 import pendulum
-from ftfy import fix_encoding
 from goose3 import Goose
 
 from beaver.config import settings
-
-
-def fixcharset(string):
-    """
-    Tenta consertar uma string em relação a codificação do texto de múltiplas maneiras
-    :param string: texto a ser consertado
-    :return: texto consertado
-    """
-    text = fix_encoding(string)
-    if "�" in text:
-        text = text.encode(settings['replacement_charset'], "ignore")
-    return text
+from beaver.util import fixcharset
 
 
 def extract(url):
