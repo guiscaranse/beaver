@@ -50,5 +50,6 @@ def magic(url):
 
 
 def debug(url):
+    os.environ["BEAVER_DEBUG"] = "1"
     print(extract(url)['article_title'])
     print(score(url))
