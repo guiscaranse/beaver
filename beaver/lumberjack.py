@@ -43,10 +43,11 @@ def filter_stopwords(texto):
 def gramatica(texto):
     resposta = dict()
     log.info("Verificando tags...")
-    log.info("Texto filtrado: " + normalize(filter_stopwords(texto)))
-    polyglot_text = Text(normalize(filter_stopwords(texto)), hint_language_code=settings['language'][:2])
+    log.info("Texto filtrado: " + normalize(texto))
+    polyglot_text = Text(texto, hint_language_code=settings['language'][:2])
     for word, tag in polyglot_text.pos_tags:
         if tag in resposta.keys():
+            log.info("Palavra (TAG): " + word + "(" + tag + ")")
             resposta[tag] += 1
         else:
             resposta[tag] = 1
