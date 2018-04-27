@@ -47,7 +47,6 @@ def gramatica(texto):
     polyglot_text = Text(texto, hint_language_code=settings['language'][:2])
     for word, tag in polyglot_text.pos_tags:
         if tag in resposta.keys():
-            log.info("Palavra (TAG): " + word + "(" + tag + ")")
             resposta[tag] += 1
         else:
             resposta[tag] = 1

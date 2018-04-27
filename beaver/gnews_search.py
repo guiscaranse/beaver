@@ -1,19 +1,20 @@
 import json
+import os
 import sys
 import urllib.parse
 import urllib.request
 
-import os
 import pendulum
 from fuzzywuzzy import fuzz
 from logbook import Logger, StreamHandler
 
 from beaver.config import settings
 from beaver.post import extract
+from beaver.util import normalize
 
 if "BEAVER_DEBUG" in os.environ:
     StreamHandler(sys.stdout).push_application()
-log = Logger('GNews')
+log = Logger('GoogleNews')
 
 
 def search_relatives(string, ignore_url=""):
@@ -26,21 +27,22 @@ def search_relatives(string, ignore_url=""):
     """
     meta_score = 0
     gnews_results = dict(relatives=[])
-    feed = "https://news.google.com/news/rss/search/section/q/" + urllib.parse.quote_plus(string) + "/" + \
-           urllib.parse.quote_plus(string) + "?hl=" + settings['language'] + "&gl=" + settings['country'] + "&ned=" + \
-           settings['language'] + "_" + settings['country'].lower()
+    feed = "https://news.google.com/news/rss/search/section/q/" + urllib.parse.quote_plus(normalize(string)) + "/" + \
+           urllib.parse.quote_plus(normalize(string)) + "?hl=" + settings['language'] + "&gl=" + settings['country'] + \
+           "&ned=" + settings['language'] + "_" + settings['country'].lower()
 
-    json_data = "https://noderssserver-gcakilmtyk.now.sh/?feedURL=" + urllib.parse.quote_plus(feed)
+    json_data = "https://noderssserver-gcakilmtyk.now.sh/?feedURL=" + feed
     with urllib.request.urlopen(json_data) as url:
         log.info("Verificando: " + json_data)
         data = json.loads(url.read().decode())
         if "items" in data:
-            log.info("Encontrado correspondências no Google News. Itens: " + str(len(data)))
+            log.info("Encontrado correspondências no Google News. Itens: " + str(len(data['items'])))
             log.info(str(data))
             for item in data['items']:
                 try:
                     dados = None
-                    log.info("Encontrado: " + str(fuzz.token_sort_ratio(string, item['title'])))
+                    log.info("Encontrado " + item['title'] + ". Token sort: " +
+                             str(fuzz.token_sort_ratio(string, item['title'])))
                     if fuzz.token_sort_ratio(string, item['title']) > 50:
                         if 'link' in item.keys():
                             if ignore_url in item['link']:
@@ -52,17 +54,42 @@ def search_relatives(string, ignore_url=""):
                             dados = extract(item['url'])
                         else:
                             raise IndexError("URL não encontrada")
+                        log.info("Extraído URL. Dados: " + str(item))
                         if 'pubDate' in item.keys():
-                            dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
+                            try:
+                                dados['date'] = pendulum.parse(item['pubDate'], tz=settings['timezone'])
+                            except Exception:
+                                log.warning("Testando UNIX timestamp para " + str(item['pubDate']))
+                                try:
+                                    dados['date'] = pendulum.parse(pendulum.from_timestamp(item['pubDate'],
+                                                                                           settings['timezone'])
+                                                                   .to_iso8601_string(), tz=settings['timezone'])
+                                except OSError: # Timestamp está em milissegundos
+                                    dados['date'] = pendulum.parse(pendulum.from_timestamp(float(
+                                        item['pubDate']/1000.0), settings['timezone']).to_iso8601_string(),
+                                                                   tz=settings['timezone'])
                         elif 'created' in item.keys():
-                            dados['date'] = pendulum.parse(item['created'], tz=settings['timezone'])
+                            try:
+                                dados['date'] = pendulum.parse(item['created'], tz=settings['timezone'])
+                            except Exception:
+                                log.warning("Testando UNIX timestamp para " + str(item['created']))
+                                try:
+                                    dados['date'] = pendulum.parse(pendulum.from_timestamp(item['created'],
+                                                                                           settings['timezone'])
+                                                                   .to_iso8601_string(), tz=settings['timezone'])
+                                except OSError: # Timestamp está em milissegundos
+                                    dados['date'] = pendulum.parse(pendulum.from_timestamp(float(
+                                        item['created']/1000.0), settings['timezone']).to_iso8601_string(),
+                                                                   tz=settings['timezone'])
                         else:
                             dados['date'] = None
                 except Exception as e:
                     log.error("Erro: " + str(e))
                     pass
                 finally:
+                    log.info("Nenhum erro, inserindo.")
                     if dados is not None:
+                        log.info("Inserindo: " + str(dados))
                         gnews_results['relatives'].append(dados)
                         meta_score += fuzz.token_sort_ratio(string, item['title'])
     if meta_score > 0:

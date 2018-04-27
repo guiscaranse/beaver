@@ -1,11 +1,20 @@
+import os
+import sys
+
 import nltk
 import pendulum
+from logbook import Logger, StreamHandler
 from nltk.corpus import stopwords
 
 import beaver.database
 from beaver import post, bing_search, gnews_search, lumberjack
 from beaver.config import settings, weights
 from beaver.exceptions import TimeError
+from beaver.util import normalize
+
+if "BEAVER_DEBUG" in os.environ:
+    StreamHandler(sys.stdout).push_application()
+log = Logger('Analyse')
 
 
 def validate(gooseobject: dict, ignore: bool) -> bool:
@@ -40,8 +49,6 @@ def alltext_score(all_text: str) -> list:
     max_words = settings['max_words_precision']
     if len(list(fd.keys())) >= settings['max_words_precision']:
         for x in range(0, settings['max_words_precision']):
-            if "," in list(fd)[x]:
-                break
             max_words = x
         return list(fd.keys())[:max_words]
     else:
@@ -72,7 +79,7 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
             return objeto
     validate(postagem, ignore)
     final_score['domain_score'] = beaver.database.checkdomains(postagem['domain'])
-    bing_relatives = bing_search.search_relatives(postagem['article_title'])
+    bing_relatives = bing_search.search_relatives(postagem['article_title'], postagem['domain'])
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
     final_score['post']['bing'] = bing_relatives['score'] * weights['bing']
     final_score['post']['google'] = gnews_relatives['score'] * weights['google']
@@ -88,6 +95,7 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
         except Exception:  # Ignora textos que não puderam ser entendidos
             pass
     popular_words = ' '.join(alltext_score(all_text))
+    log.info("Popular Words: " + popular_words)
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
         popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
