@@ -10,7 +10,7 @@ import beaver.database
 from beaver import post, bing_search, gnews_search, lumberjack
 from beaver.config import settings, weights
 from beaver.exceptions import TimeError
-from beaver.util import normalize
+from beaver.util import normalize, relatives_compare_text
 
 if "BEAVER_DEBUG" in os.environ:
     StreamHandler(sys.stdout).push_application()
@@ -53,8 +53,6 @@ def alltext_score(all_text: str) -> list:
         return list(fd.keys())[:max_words]
     else:
         for y in range(0, len(list(fd.keys()))):
-            if "," in list(fd)[y]:
-                break
             max_words = y
         return list(fd.keys())[:max_words]
 
@@ -94,8 +92,10 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
             all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
             pass
-    popular_words = ' '.join(alltext_score(all_text))
+    popular_words = ' '.join(alltext_score(all_text)).replace(",", "")
     log.info("Popular Words: " + popular_words)
+    final_score['post']['popular_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
+    final_score['post']['popular_google_text'] = relatives_compare_text(gnews_relatives['relatives'], postagem['text'])
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
         popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']

@@ -15,7 +15,12 @@ if "BEAVER_DEBUG" in os.environ:
 log = Logger('Lumberjack')
 
 
-def check_and_download(package):
+def check_and_download(package: str) -> bool:
+    """
+    Verifica se determinado pacote do Polyglot está instalado, caso não, será instalado automaticamente
+    :param package: pacote a ser procurado
+    :return: Verdadeiro sempre. Se houverem erros uma excessão será levantada
+    """
     if downloader.is_installed(package) == downloader.NOT_INSTALLED:
         log.info(package.split(".")[0] + " não instalado, instalando.")
         check_and_download(package)
@@ -24,13 +29,21 @@ def check_and_download(package):
 
 
 def verify_polyglot():
+    """
+    Verifica se os pacotes que este programa usa estão instalados
+    """
     check_and_download("embeddings2.pt")
     check_and_download("pos2.pt")
     check_and_download("ner2.pt")
     check_and_download("sentiment2.pt")
 
 
-def filter_stopwords(texto):
+def filter_stopwords(texto: str) -> str:
+    """
+    Filtra stopwords, removendo-as
+    :param texto: Texto a ser filtrado
+    :return: Texto filtrado
+    """
     try:
         nltk.data.find('corpora\stopwords')
     except LookupError:
@@ -40,7 +53,12 @@ def filter_stopwords(texto):
     return " ".join(filtered)
 
 
-def gramatica(texto):
+def gramatica(texto: str) -> dict:
+    """
+    Analisa e conta cada token de um texto no formato explicado aqui: http://polyglot.readthedocs.io/en/latest/POS.html
+    :param texto: Texto a ser analisado
+    :return: Dicionário com as tags presentes e a quantia delas
+    """
     resposta = dict()
     log.info("Verificando tags...")
     log.info("Texto filtrado: " + normalize(texto))
@@ -54,7 +72,12 @@ def gramatica(texto):
     return resposta
 
 
-def polaridade(texto):
+def polaridade(texto: str) -> int:
+    """
+    Verifica a polaridade de um texto (sentimentos bons/ruins)
+    :param texto: Texto a ser analisado
+    :return: Polaridade em número
+    """
     resultado = 0
     polyglot_text = Text(filter_stopwords(texto), hint_language_code=settings['language'][:2])
     for w in polyglot_text.words:
