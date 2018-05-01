@@ -20,6 +20,11 @@ logbook = "*"
 "653ecd9" = {path = ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"}
 "3486be2" = {path = ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"}
 polyglot = {git = "https://github.com/aboSamoor/polyglot.git"}
+scipy = "*"
+numpy = "*"
+pandas = "*"
+sklearn = "*"
+matplotlib = "*"
 
 
 [dev-packages]
