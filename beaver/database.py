@@ -51,10 +51,10 @@ def registerpost(gooseobject: dict, scoredict: dict) -> None:
     scoredict['hash'] = hashlib.md5(str(gooseobject['article_title'] + gooseobject['domain']).encode('utf-8')).hexdigest()
     table = db.table('posts')
     table.insert(scoredict)
-    if score_table['tc'] <= float(scoredict['post']['truth_score']) < score_table['safe']:
+    if score_table['tc'] <= float(scoredict['post']['average_score']) < score_table['safe']:
         # Tendenciosa/Modificada
         table_domain.update(add('score_td', +10), query.domain == gooseobject['domain'])
-    elif float(scoredict['post']['truth_score']) < score_table['tc']:
+    elif float(scoredict['post']['average_score']) < score_table['tc']:
         # Falsa
         table_domain.update(add('score_unsafe', +10), query.domain == gooseobject['domain'])
     else:

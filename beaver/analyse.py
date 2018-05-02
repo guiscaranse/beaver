@@ -71,7 +71,7 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
     final_score['polyglot'] = dict(grammar=lumberjack.gramatica(postagem['text']),
                                    polarity=lumberjack.polaridade(postagem['text']))
     if not force_db:
-        if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])):
+        if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])) > 0:
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
             return objeto
@@ -94,8 +94,8 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
             pass
     popular_words = ' '.join(alltext_score(all_text)).replace(",", "")
     log.info("Popular Words: " + popular_words)
-    final_score['post']['popular_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
-    final_score['post']['popular_google_text'] = relatives_compare_text(gnews_relatives['relatives'], postagem['text'])
+    final_score['post']['relatives_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
+    final_score['post']['relatives_google_text'] = relatives_compare_text(gnews_relatives['relatives'], postagem['text'])
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
         popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
@@ -104,7 +104,10 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
     else:
         final_score['post']['popular_bing'] = 0
         final_score['post']['popular_google'] = 0
-    final_score['post']['truth_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
+    final_score['post']['average_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
     if not force_db:
-        beaver.database.registerpost(postagem, final_score)
+        try:
+            beaver.database.registerpost(postagem, final_score)
+        except Exception:
+            pass
     return final_score
