@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "344589eb3c19ac6493633fc07c3b109a80636a400503eed92b1d5fe2be7fdc26"
+            "sha256": "ec4da086d1bac589775e09b3c62345eac6899333db244f7830edd09686bc5532"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -526,11 +526,11 @@
         }
     },
     "develop": {
-        "3486be2": {
-            "path": ".\\PyICU.whl"
+        "pycld2": {
+            "path": ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"
         },
-        "653ecd9": {
-            "path": ".\\pycld2.whl"
+        "pyicu": {
+            "path": ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"
         }
     }
 }
