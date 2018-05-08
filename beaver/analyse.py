@@ -75,6 +75,7 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
             return objeto
+    log.info("Analisando '" + postagem['article_title'] +"'")
     log.info("Validando postagem...")
     validate(postagem, ignore)
     log.info("Analisando domínio...")

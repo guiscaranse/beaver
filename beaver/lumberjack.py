@@ -48,6 +48,9 @@ def filter_stopwords(texto: str) -> str:
         nltk.data.find('corpora\stopwords')
     except LookupError:
         nltk.download('stopwords')
+    if len(texto) == 0:
+        log.info("Não existe texto")
+        return ""
     p_stopwords = set(stopwords.words('portuguese'))
     filtered = (w for w in texto.split() if w.lower() not in p_stopwords)
     return " ".join(filtered)
@@ -61,6 +64,9 @@ def gramatica(texto: str) -> dict:
     """
     resposta = dict()
     log.info("Verificando tags...")
+    if len(texto) == 0:
+        log.info("Não existe texto")
+        return dict()
     log.info("Texto filtrado: " + normalize(texto))
     polyglot_text = Text(texto, hint_language_code=settings['language'][:2])
     for word, tag in polyglot_text.pos_tags:
@@ -79,6 +85,9 @@ def polaridade(texto: str) -> int:
     :return: Polaridade em número
     """
     resultado = 0
+    if len(texto) == 0:
+        log.info("Não existe texto")
+        return 0
     polyglot_text = Text(filter_stopwords(texto), hint_language_code=settings['language'][:2])
     for w in polyglot_text.words:
         resultado += w.polarity
