@@ -30,10 +30,11 @@ def search_relatives(string, ignore_url=""):
     feed = "https://news.google.com/news/rss/search/section/q/" + urllib.parse.quote_plus(normalize(string)) + "/" + \
            urllib.parse.quote_plus(normalize(string)) + "?hl=" + settings['language'] + "&gl=" + settings['country'] + \
            "&ned=" + settings['language'] + "_" + settings['country'].lower()
-
+    log.info("Iniciando pesquisa no Google News...")
     json_data = "https://noderssserver-gcakilmtyk.now.sh/?feedURL=" + feed
+    log.info("Tentando acessar: " + json_data)
     with urllib.request.urlopen(json_data) as url:
-        log.info("Verificando: " + json_data)
+        log.info("Acessado!")
         data = json.loads(url.read().decode())
         if "items" in data:
             log.info("Encontrado correspondências no Google News. Itens: " + str(len(data['items'])))

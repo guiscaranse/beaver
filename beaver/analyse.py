@@ -75,26 +75,36 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
             return objeto
+    log.info("Validando postagem...")
     validate(postagem, ignore)
+    log.info("Analisando domínio...")
     final_score['domain_score'] = beaver.database.checkdomains(postagem['domain'])
+    log.info("Analisando relatives (BING)...")
     bing_relatives = bing_search.search_relatives(postagem['article_title'], postagem['domain'])
+    log.info("Analisando relatives (GOOGLE)...")
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
+    log.info("Analisando multiplicando relatives (BING)...")
     final_score['post']['bing'] = bing_relatives['score'] * weights['bing']
+    log.info("Analisando multiplicando relatives (GOOGLE)...")
     final_score['post']['google'] = gnews_relatives['score'] * weights['google']
     all_text = ""
+    log.info("Pegando alltext...")
     for news in bing_relatives['relatives']:
         try:
             all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
             pass
-    for news in gnews_relatives['relatives']:
+    '''for news in gnews_relatives['relatives']:
         try:
             all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
-            pass
+            pass'''
+    log.info("Juntando alltext...")
     popular_words = ' '.join(alltext_score(all_text)).replace(",", "")
     log.info("Popular Words: " + popular_words)
+    log.info("Buscando popular words (BING)...")
     final_score['post']['relatives_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
+    log.info("Buscando popular words (GOOGLE)...")
     final_score['post']['relatives_google_text'] = relatives_compare_text(gnews_relatives['relatives'], postagem['text'])
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
