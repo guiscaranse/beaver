@@ -31,7 +31,7 @@ def search_relatives(string, ignore_url=""):
            urllib.parse.quote_plus(normalize(string)) + "?hl=" + settings['language'] + "&gl=" + settings['country'] + \
            "&ned=" + settings['language'] + "_" + settings['country'].lower()
     log.info("Iniciando pesquisa no Google News...")
-    json_data = "https://noderssserver-gcakilmtyk.now.sh/?feedURL=" + feed
+    json_data = "https://noderssserver-ldlsvrxpyu.now.sh/?feedURL=" + feed
     log.info("Tentando acessar: " + json_data)
     with urllib.request.urlopen(json_data) as url:
         log.info("Acessado!")
