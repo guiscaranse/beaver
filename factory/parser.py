@@ -15,7 +15,6 @@ def build_data():
     with open(module_path + "/data/analyse.csv", 'w', newline='') as csvfile:
         with open(module_path + "/data/levantamentos.csv", 'r') as readfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers, restval='0')
-            writer.writeheader()
             reader = csv.DictReader(readfile)
             for row in reader:
                 row_write = dict()
@@ -25,10 +24,10 @@ def build_data():
                 for key in data['polyglot']['grammar'].keys():
                     row_write[key] = data['polyglot']['grammar'][key]
                 row_write['polarity'] = data['polyglot']['polarity']
-                if row['Supervisor'] == "Verdadeiro":
+                if row['Supervisor'] == "Verdadeira":
                     row_write['result'] = 1
                 elif row['Supervisor'] == "Tendenciosa":
                     row_write['result'] = 0.65
                 else:
-                    row_write['result'] = 0
+                    row_write['result'] = 0.0
                 writer.writerow(row_write)

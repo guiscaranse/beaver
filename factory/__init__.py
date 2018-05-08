@@ -1,1 +1,1 @@
-from factory import parser
+from factory import parser, analyse
