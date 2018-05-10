@@ -15,13 +15,16 @@ def build_data():
             reader = csv.DictReader(readfile)
             for row in reader:
                 row_write = dict()
+                print(row['URL'])
                 data = beaver.analyse.score(row['URL'])
                 for key in data['post'].keys():
                     row_write[key] = data['post'][key]
                 for key in data['polyglot']['grammar'].keys():
-                    row_write[key] = data['polyglot']['grammar'][key]
-                for key in data['polyglot']['polarity'].keys():
-                    row_write[key] = data['polyglot']['polarity'][key]
+                    if key is not "polarity":
+                        row_write[key] = data['polyglot']['grammar'][key]
+                if data['polyglot']['polarity'] is not 0:
+                    for key in data['polyglot']['polarity'].keys():
+                        row_write[key] = data['polyglot']['polarity'][key]
                 if row['Supervisor'] == "Verdadeira":
                     row_write['result'] = 1
                 else:
