@@ -78,7 +78,7 @@ def gramatica(texto: str) -> dict:
     total = sum(resposta.values())
     log.info("Total de Gramática: " + str(total))
     for tag in resposta.keys():
-        resposta[tag] = round(resposta[tag]/total, 3)
+        resposta[tag] = round(resposta[tag] / total, 3)
     log.info("Resposta: " + str(resposta))
     return resposta
 
@@ -100,7 +100,6 @@ def polaridade(texto: str) -> dict:
             resultado['bad'] += 1
         elif pol > 0:
             resultado['good'] += 1
-    resultado['bad'] = resultado['bad']/len(polyglot_text.words)
-    resultado['good'] = resultado['good'] / len(polyglot_text.words)
+    resultado['bad'] = round(resultado['bad'] / len(polyglot_text.words), 3)
+    resultado['good'] = round(resultado['good'] / len(polyglot_text.words), 3)
     return resultado
-

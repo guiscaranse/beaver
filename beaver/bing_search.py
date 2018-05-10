@@ -30,7 +30,7 @@ def search_relatives(query_str, ignore_url=""):
         raise BeaverError("Chaves da Microsoft devem estar presentes na variável do sistema MS_BING_KEY")
     try:
         results = PyMsCognitiveNewsSearch(os.environ.get("MS_BING_KEY"), normalize(query_str), custom_params={
-            "mkt": settings['language'], "setLang": settings['language'][:2]}).search(limit=10, format='json')
+            "mkt": settings['language'], "setLang": settings['language'][:2]}).search(limit=50, format='json')
         log.info("Encontrado " + str(len(results)) + " resultados.")
     except Exception as e:
         raise BeaverError("Não foi possível se comunicar com o Bing, talvez as chaves tenham expirado? [" + str(e) +
