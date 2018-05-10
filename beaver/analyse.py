@@ -10,7 +10,7 @@ import beaver.database
 from beaver import post, bing_search, gnews_search, lumberjack
 from beaver.config import settings, weights
 from beaver.exceptions import TimeError
-from beaver.util import normalize, relatives_compare_text
+from beaver.util import relatives_compare_text
 
 if "BEAVER_DEBUG" in os.environ:
     StreamHandler(sys.stdout).push_application()
@@ -68,14 +68,16 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
     """
     final_score = dict(domain_score={}, post={}, polyglot={})
     postagem = post.extract(url)
-    final_score['polyglot'] = dict(grammar=lumberjack.gramatica(postagem['text']),
-                                   polarity=lumberjack.polaridade(postagem['text']))
     if not force_db:
         if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])) > 0:
+            log.info("Encontrado correspondência de Domínio em BD")
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
             return objeto
-    log.info("Analisando '" + postagem['article_title'] +"'")
+
+    final_score['polyglot'] = dict(grammar=lumberjack.gramatica(postagem['text']),
+                                   polarity=lumberjack.polaridade(postagem['text']))
+    log.info("Analisando '" + postagem['article_title'] + "'")
     log.info("Validando postagem...")
     validate(postagem, ignore)
     log.info("Analisando domínio...")
@@ -106,7 +108,8 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
     log.info("Buscando popular words (BING)...")
     final_score['post']['relatives_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
     log.info("Buscando popular words (GOOGLE)...")
-    final_score['post']['relatives_google_text'] = relatives_compare_text(gnews_relatives['relatives'], postagem['text'])
+    final_score['post']['relatives_google_text'] = relatives_compare_text(gnews_relatives['relatives'],
+                                                                          postagem['text'])
     if len(popular_words) > 0:
         popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
         popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
