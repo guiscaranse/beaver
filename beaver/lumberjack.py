@@ -74,22 +74,33 @@ def gramatica(texto: str) -> dict:
             resposta[tag] += 1
         else:
             resposta[tag] = 1
+    # Porcentagem
+    total = sum(resposta.values())
+    log.info("Total de Gramática: " + str(total))
+    for tag in resposta.keys():
+        resposta[tag] = round(resposta[tag]/total, 3)
     log.info("Resposta: " + str(resposta))
     return resposta
 
 
-def polaridade(texto: str) -> int:
+def polaridade(texto: str) -> dict:
     """
     Verifica a polaridade de um texto (sentimentos bons/ruins)
     :param texto: Texto a ser analisado
     :return: Polaridade em número
     """
-    resultado = 0
+    resultado = dict(good=0, bad=0)
     if len(texto) == 0:
         log.info("Não existe texto")
-        return 0
+        return resultado
     polyglot_text = Text(filter_stopwords(texto), hint_language_code=settings['language'][:2])
     for w in polyglot_text.words:
-        resultado += w.polarity
+        pol = w.polarity
+        if pol < 0:
+            resultado['bad'] += 1
+        elif pol > 0:
+            resultado['good'] += 1
+    resultado['bad'] = resultado['bad']/len(polyglot_text.words)
+    resultado['good'] = resultado['good'] / len(polyglot_text.words)
     return resultado
 

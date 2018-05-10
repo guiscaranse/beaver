@@ -7,7 +7,7 @@ import factory
 
 headers = ['bing', 'google', 'relatives_bing_text', 'relatives_google_text', 'popular_bing',
            'popular_google', 'average_score', 'ADJ', 'ADP', 'ADV', 'AUX', 'CONJ', 'DET', 'INTJ', 'NOUN',
-           'NUM', 'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'X', 'polarity', 'result']
+           'NUM', 'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'X', 'good', 'bad', 'result']
 
 
 def build_data():
@@ -23,11 +23,10 @@ def build_data():
                     row_write[key] = data['post'][key]
                 for key in data['polyglot']['grammar'].keys():
                     row_write[key] = data['polyglot']['grammar'][key]
-                row_write['polarity'] = data['polyglot']['polarity']
+                for key in data['polyglot']['polarity'].keys():
+                    row_write[key] = data['polyglot']['polarity'][key]
                 if row['Supervisor'] == "Verdadeira":
                     row_write['result'] = 1
-                elif row['Supervisor'] == "Tendenciosa":
-                    row_write['result'] = 0.65
                 else:
                     row_write['result'] = 0.0
                 writer.writerow(row_write)
