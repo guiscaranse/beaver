@@ -51,4 +51,4 @@ def magic(url):
 
 def debug(url):
     print(extract(url)['article_title'])
-    print(score(url, force_db=True))
+    print(score(url))
