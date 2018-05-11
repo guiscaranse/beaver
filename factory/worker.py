@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 import pandas
 from sklearn import model_selection
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, RandomForestRegressor, ExtraTreesRegressor, \
+    GradientBoostingClassifier, GradientBoostingRegressor
+from sklearn.linear_model import LogisticRegression, ElasticNetCV, LarsCV, LassoCV, LassoLarsCV, MultiTaskElasticNetCV, \
+    MultiTaskLassoCV, OrthogonalMatchingPursuitCV, RidgeCV, LassoLarsIC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
@@ -42,12 +45,13 @@ def train():
                                                                                     random_state=seed)
     scoring = 'accuracy'
     models = [('LR', LogisticRegression()), ('LDA', LinearDiscriminantAnalysis()), ('KNN', KNeighborsClassifier()),
-              ('CART', DecisionTreeClassifier()), ('NB', GaussianNB()), ('SVM', SVC())]
+              ('CART', DecisionTreeClassifier()), ('NB', GaussianNB()), ('SVM', SVC()),
+              ("ETC", ExtraTreesClassifier()), ("GBC", GradientBoostingClassifier())]
     # evaluate each model in turn
     results = []
     names = []
     for name, model in models:
-        kfold = model_selection.KFold(n_splits=10, random_state=seed)
+        kfold = model_selection.KFold(n_splits=15, random_state=seed)
         cv_results = model_selection.cross_val_score(model, X_train, Y_train, cv=kfold, scoring=scoring)
         results.append(cv_results)
         names.append(name)
