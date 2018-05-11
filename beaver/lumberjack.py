@@ -92,7 +92,7 @@ def polaridade(texto: str) -> dict:
     resultado = dict(good=0, bad=0)
     if len(texto) == 0:
         log.info("Não existe texto")
-        return resultado
+        return dict()
     polyglot_text = Text(filter_stopwords(texto), hint_language_code=settings['language'][:2])
     for w in polyglot_text.words:
         pol = w.polarity
