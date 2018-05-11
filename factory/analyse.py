@@ -33,8 +33,8 @@ def prediction():
     # Separar dados de validação, e dados de treino
     array = dataset.values
     # Dados
-    X = array[:, 0:25]  # Dados
-    Y = array[:, 25]  # Resultados
+    X = array[:, 0:26]  # Dados
+    Y = array[:, 26]  # Resultados
     print(Y)
     validation_size = 0.20  # Divide datasets
     seed = 7  # Semente
