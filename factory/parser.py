@@ -9,13 +9,12 @@ from factory.settings import headers
 
 def build_data():
     module_path = os.path.dirname(inspect.getfile(factory))
-    with open(module_path + "/data/analyse.csv", 'w', newline='') as csvfile:
+    with open(module_path + "/data/dataset.csv", 'w', newline='') as csvfile:
         with open(module_path + "/data/levantamentos.csv", 'r') as readfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers, restval='0')
             reader = csv.DictReader(readfile)
             for row in reader:
                 row_write = dict()
-                print(row['URL'])
                 data = beaver.analyse.score(row['URL'])
                 for key in data['post'].keys():
                     row_write[key] = data['post'][key]
@@ -30,3 +29,6 @@ def build_data():
                 else:
                     row_write['result'] = 0.0
                 writer.writerow(row_write)
+    lines = open(module_path + "/data/dataset.csv").readlines()
+    # [random.shuffle(lines) for _ in range(50)]
+    open(module_path + "/data/dataset.csv", 'w').writelines(lines)

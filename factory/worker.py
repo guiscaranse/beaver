@@ -17,7 +17,7 @@ from factory.settings import headers
 def describe():
     import factory
     module_path = os.path.dirname(inspect.getfile(factory))
-    dataset = pandas.read_csv(module_path + "/data/analyse.csv", names=headers)
+    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
     print("Sumary: \n" + str(dataset.shape))
     print("Head: \n" + str(dataset.head(20)))
     print("Describe:\n" + str(dataset.describe()))
@@ -26,10 +26,10 @@ def describe():
     plt.show()
 
 
-def prediction():
+def train():
     import factory
     module_path = os.path.dirname(inspect.getfile(factory))
-    dataset = pandas.read_csv(module_path + "/data/analyse.csv", names=headers)
+    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
     # Separar dados de validação, e dados de treino
     array = dataset.values
     # Dados
