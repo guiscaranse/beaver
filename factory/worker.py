@@ -65,7 +65,8 @@ def predict(data):
     model.fit(X_train, Y_train)
     predictions = model.predict(data)
     print(predictions)
-    print(model.predict_proba(data))
+    print("% verdadeira: ", round(float(model.predict_proba(data)[:, 1]), 2))
+    print("% falsa: ", round(float(model.predict_proba(data)[:, 0]), 2))
 
 
 def auto_predict(url):
