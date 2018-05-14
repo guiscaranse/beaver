@@ -18,7 +18,7 @@ log = Logger('Bing')
 
 def search_relatives(query_str, ignore_url=""):
     """
-    Procura no Bing, posts similares com >50 de pontuação no token_sort_ratio limitado a 10 resultados
+    Procura no Bing, posts similares com >50 de pontuação no token_sort_ratio limitado a 50 resultados
     :param ignore_url: URL para ignorar notícias
     :param query_str: conteúdo a ser buscado (Pode ser um título ou o conteúdo da postagem)
     :return: dicionário com um dicionário onde 'relatives' é uma array de dicionários dos dados dos posts similares,
