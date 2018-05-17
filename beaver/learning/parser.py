@@ -8,6 +8,9 @@ from beaver.config import headers
 
 
 def build_data():
+    """
+    Constrói o dataset com base no levantamentos.csv
+    """
     module_path = os.path.dirname(inspect.getfile(learning))
     with open(module_path + "/data/dataset.csv", 'w', newline='') as csvfile:
         with open(module_path + "/data/levantamentos.csv", 'r') as readfile:
