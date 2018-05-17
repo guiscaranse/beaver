@@ -3,7 +3,6 @@ import hashlib
 from tinydb import TinyDB, Query
 from tinydb.operations import add
 
-import beaver
 from beaver.config import score_table
 
 db = TinyDB('db.json')
@@ -41,7 +40,7 @@ def checkpost(title_domain: str) -> dict:
     return dict()
 
 
-def registerpost(gooseobject: beaver.post, scoredict: dict) -> None:
+def registerpost(gooseobject: dict, scoredict: dict) -> None:
     """
     Registra uma postagem nova não analisada anteriormente
     :param gooseobject: Objeto beaver.post
