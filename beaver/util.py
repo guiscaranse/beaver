@@ -48,9 +48,10 @@ def fixcharset(string):
     return text
 
 
-def relatives_compare_text(relatives: list, text: str) -> int:
+def relatives_compare_text(relatives: dict, text: str) -> int:
     """
     Compara o texto de uma lista de postagens relativas e da uma média no final
+    :rtype: integer
     :param relatives: postagens relativas (pode ser do Bing ou Google) -> Ler gnews_search ou bing_search
     :param text: texto a ser comparado (da postagem original)
     :return: média da pontuação dos textos

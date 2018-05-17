@@ -7,7 +7,8 @@ from logbook import Logger, StreamHandler
 from nltk.corpus import stopwords
 
 import beaver.database
-from beaver import post, bing_search, gnews_search, lumberjack
+from beaver import post, text_polyglot
+from beaver.search import bing_search, gnews_search
 from beaver.config import settings, weights
 from beaver.exceptions import TimeError
 from beaver.util import relatives_compare_text
@@ -57,29 +58,29 @@ def alltext_score(all_text: str) -> list:
         return list(fd.keys())[:max_words]
 
 
-def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
+def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -> dict:
     """
     Analisa a pontuação de uma notícia, sendo a pontuação a probabilidade desta ser falsa ou não
-    :param force_db: Se deve ignorar a existência do banco de dados
-    :param ignore: Se deve ignorar validações
+    :param ignore_db: Se deve ignorar a existência do banco de dados
+    :param ignore_validations: Se deve ignorar validações
     :param url: link a ser analisado
     :return: retorna um dicionário com as respectivas pontuações em cada categoria
     O dicionário é dividido em 'domain' (pontuações do domínio) e 'post' (pontuações da notícia)
     """
     final_score = dict(domain_score={}, post={}, polyglot={})
     postagem = post.extract(url)
-    if not force_db:
+    if not ignore_db:
         if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])) > 0:
             log.info("Encontrado correspondência de Domínio em BD")
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
             return objeto
 
-    final_score['polyglot'] = dict(grammar=lumberjack.gramatica(postagem['text']),
-                                   polarity=lumberjack.polaridade(postagem['text']))
+    final_score['polyglot'] = dict(grammar=text_polyglot.gramatica(postagem['text']),
+                                   polarity=text_polyglot.polaridade(postagem['text']))
     log.info("Analisando '" + postagem['article_title'] + "'")
     log.info("Validando postagem...")
-    validate(postagem, ignore)
+    validate(postagem, ignore_validations)
     log.info("Analisando domínio...")
     final_score['domain_score'] = beaver.database.checkdomains(postagem['domain'])
     log.info("Analisando relatives (BING)...")
@@ -119,7 +120,7 @@ def score(url: str, ignore: bool = False, force_db: bool = False) -> dict:
         final_score['post']['popular_bing'] = 0
         final_score['post']['popular_google'] = 0
     final_score['post']['average_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
-    if not force_db:
+    if not ignore_db:
         try:
             beaver.database.registerpost(postagem, final_score)
         except Exception:

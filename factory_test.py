@@ -1,7 +1,5 @@
 import sys
 
-import factory
-
-# factory.parser.build_data()
-# factory.worker.describe()
-factory.worker.auto_predict(sys.argv[1])
+# learning.parser.build_data()
+# learning.worker.describe()
+beaver.factory.worker.auto_predict(sys.argv[1])

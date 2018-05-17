@@ -13,14 +13,14 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 import beaver
-from factory.settings import headers
+from beaver.config import headers
 
 model = GaussianNB()
 
 
 def describe():
-    import factory
-    module_path = os.path.dirname(inspect.getfile(factory))
+    from beaver import learning
+    module_path = os.path.dirname(inspect.getfile(learning))
     dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
     print("Sumary: \n" + str(dataset.shape))
     print("Head: \n" + str(dataset.head(20)))
@@ -31,8 +31,8 @@ def describe():
 
 
 def train():
-    import factory
-    module_path = os.path.dirname(inspect.getfile(factory))
+    from beaver import learning
+    module_path = os.path.dirname(inspect.getfile(learning))
     dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
     # Separar dados de validação, e dados de treino
     array = dataset.values

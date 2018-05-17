@@ -3,12 +3,12 @@ import inspect
 import os
 
 import beaver
-import factory
-from factory.settings import headers
+from beaver import learning
+from beaver.config import headers
 
 
 def build_data():
-    module_path = os.path.dirname(inspect.getfile(factory))
+    module_path = os.path.dirname(inspect.getfile(learning))
     with open(module_path + "/data/dataset.csv", 'w', newline='') as csvfile:
         with open(module_path + "/data/levantamentos.csv", 'r') as readfile:
             writer = csv.DictWriter(csvfile, fieldnames=headers, restval='0')

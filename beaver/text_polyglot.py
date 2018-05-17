@@ -23,7 +23,7 @@ def check_and_download(package: str) -> bool:
     """
     if downloader.is_installed(package) == downloader.NOT_INSTALLED:
         log.info(package.split(".")[0] + " não instalado, instalando.")
-        check_and_download(package)
+        downloader.download(package)
         log.info(package.split(".")[0] + " instalado.")
     return True
 
