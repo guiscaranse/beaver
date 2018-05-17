@@ -15,6 +15,7 @@ Depende de:
 ### Windows
 * [PyICU](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyicu) (Pré-Compilado para o Python utilizado)
 * [pycld2](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycld2) (Pré-Compilado para o Python utilizado)
+
 É possível que a instalação acima falhe e você deve instalar os Wheels do `PyICU` e `pycld2` e deve-se instala-los manualmente usando como exemplo:
 ```sh
 pipenv install ./PyICU.whl
