@@ -18,7 +18,7 @@ if "BEAVER_DEBUG" in os.environ:
 log = Logger('Analyse')
 
 
-def validate(gooseobject: dict, ignore: bool) -> bool:
+def validate(gooseobject: beaver.post, ignore: bool) -> bool:
     """
     Valida algumas informações da notícia sendo analisada. Reservar esta área para definir regras
     :param gooseobject: objeto beaver.post
