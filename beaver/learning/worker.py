@@ -6,10 +6,11 @@ from sklearn import model_selection
 from sklearn.naive_bayes import GaussianNB
 
 import beaver
+from beaver import learning
 from beaver.config import headers
 
 model = GaussianNB()
-module_path = os.path.dirname(inspect.getfile(beaver.learning))
+module_path = os.path.dirname(inspect.getfile(learning))
 
 
 def train():
@@ -56,3 +57,28 @@ def predict(url: str) -> list:
         planet.append(value)
     universe.append(planet)
     return model.predict_proba(universe)
+
+
+def check_models():
+    train()
+    scoring = 'accuracy'
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.ensemble import ExtraTreesClassifier
+    from sklearn.ensemble import GradientBoostingClassifier
+    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+    from sklearn.svm import SVC
+    from sklearn.neighbors import KNeighborsClassifier
+    models = [('LR', LogisticRegression()), ('LDA', LinearDiscriminantAnalysis()), ('KNN', KNeighborsClassifier()),
+              ('CART', DecisionTreeClassifier()), ('NB', GaussianNB()), ('SVM', SVC()),
+              ("ETC", ExtraTreesClassifier()), ("GBC", GradientBoostingClassifier())]
+    # evaluate each model in turn
+    results = []
+    names = []
+    for name, modelt in models:
+        kfold = model_selection.KFold(n_splits=15, random_state=7)
+        cv_results = model_selection.cross_val_score(modelt, X_train, Y_train, cv=kfold, scoring=scoring)
+        results.append(cv_results)
+        names.append(name)
+        msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+        print(msg)

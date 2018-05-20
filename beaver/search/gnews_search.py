@@ -27,19 +27,17 @@ def search_relatives(string, ignore_url=""):
     """
     meta_score = 0
     gnews_results = dict(relatives=[])
-    feed = "https://news.google.com/news/rss/search/section/q/" + urllib.parse.quote_plus(normalize(string)) + "/" + \
-           urllib.parse.quote_plus(normalize(string)) + "?hl=" + settings['language'] + "&gl=" + settings['country'] + \
-           "&ned=" + settings['language'] + "_" + settings['country'].lower()
     log.info("Iniciando pesquisa no Google News...")
-    json_data = "https://noderssserver-ldlsvrxpyu.now.sh/?feedURL=" + feed
+    json_data = "https://beavergnewsserver.now.sh/search/" + urllib.parse.quote_plus(normalize(string)) + \
+                "?lang=" + settings['language']
     log.info("Tentando acessar: " + json_data)
     with urllib.request.urlopen(json_data) as url:
         log.info("Acessado!")
         data = json.loads(url.read().decode())
-        if "items" in data:
-            log.info("Encontrado correspondências no Google News. Itens: " + str(len(data['items'])))
+        if "articles" in data:
+            log.info("Encontrado correspondências no Google News. Itens: " + str(len(data['articles'])))
             log.info(str(data))
-            for item in data['items']:
+            for item in data['articles']:
                 try:
                     dados = None
                     log.info("Encontrado " + item['title'] + ". Token sort: " +

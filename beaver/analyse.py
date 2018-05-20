@@ -98,11 +98,11 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
             all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
             pass
-    '''for news in gnews_relatives['relatives']:
+    for news in gnews_relatives['relatives']:
         try:
             all_text += post.fixcharset(str(news['text']))
         except Exception:  # Ignora textos que não puderam ser entendidos
-            pass'''
+            pass
     log.info("Juntando alltext...")
     popular_words = ' '.join(alltext_score(all_text)).replace(",", "")
     log.info("Popular Words: " + popular_words)
