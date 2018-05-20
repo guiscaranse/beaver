@@ -42,7 +42,7 @@ def search_relatives(string, ignore_url=""):
                     dados = None
                     log.info("Encontrado " + item['title'] + ". Token sort: " +
                              str(fuzz.token_sort_ratio(string, item['title'])))
-                    if fuzz.token_sort_ratio(string, item['title']) > 50:
+                    if fuzz.token_sort_ratio(string, item['title']) >= 40:
                         if 'link' in item.keys():
                             if ignore_url in item['link']:
                                 raise IndexError("URL Inválida")

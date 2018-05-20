@@ -3,13 +3,14 @@ import os
 
 import pandas
 from sklearn import model_selection
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.naive_bayes import GaussianNB
 
 import beaver
 from beaver import learning
 from beaver.config import headers
 
-model = GaussianNB()
+model = ExtraTreesClassifier()
 module_path = os.path.dirname(inspect.getfile(learning))
 
 
@@ -57,6 +58,18 @@ def predict(url: str) -> list:
         planet.append(value)
     universe.append(planet)
     return model.predict_proba(universe)
+
+
+def describe():
+    import matplotlib.pyplot as plt
+    module_path = os.path.dirname(inspect.getfile(learning))
+    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
+    print("Sumary: \n" + str(dataset.shape))
+    print("Head: \n" + str(dataset.head(20)))
+    print("Describe:\n" + str(dataset.describe()))
+    print(dataset.groupby('result').size())
+    pandas.plotting.scatter_matrix(dataset)
+    plt.show()
 
 
 def check_models():
