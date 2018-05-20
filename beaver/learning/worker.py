@@ -21,8 +21,8 @@ def train():
     # Separar dados de validação, e dados de treino
     array = dataset.values
     # Dados
-    X = array[:, 0:26]  # Dados
-    Y = array[:, 26]  # Resultados
+    X = array[:, 0:24]  # Dados
+    Y = array[:, 24]  # Resultados
     validation_size = 0.20  # Divide datasets
     global X_train, X_validation, Y_train, Y_validation
     X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y,
@@ -66,17 +66,16 @@ def check_models():
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.ensemble import ExtraTreesClassifier
     from sklearn.ensemble import GradientBoostingClassifier
-    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
     from sklearn.svm import SVC
     from sklearn.neighbors import KNeighborsClassifier
-    models = [('LR', LogisticRegression()), ('LDA', LinearDiscriminantAnalysis()), ('KNN', KNeighborsClassifier()),
+    models = [('LR', LogisticRegression()), ('KNN', KNeighborsClassifier()),
               ('CART', DecisionTreeClassifier()), ('NB', GaussianNB()), ('SVM', SVC()),
               ("ETC", ExtraTreesClassifier()), ("GBC", GradientBoostingClassifier())]
     # evaluate each model in turn
     results = []
     names = []
     for name, modelt in models:
-        kfold = model_selection.KFold(n_splits=15, random_state=7)
+        kfold = model_selection.KFold(n_splits=10, random_state=7)
         cv_results = model_selection.cross_val_score(modelt, X_train, Y_train, cv=kfold, scoring=scoring)
         results.append(cv_results)
         names.append(name)

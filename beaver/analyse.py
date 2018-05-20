@@ -34,30 +34,6 @@ def validate(gooseobject: dict, ignore: bool) -> bool:
     return True
 
 
-def alltext_score(all_text: str) -> list:
-    """
-    Esta função analisa a escrita de um texto utilizando o NLTK, permitindo obter palavras-chave de um texto. Após isso
-    ele busca algumas palavras chaves formando frases nos veículos de notícias e extraindo a pontuação deles.
-    :param all_text: Texto a ser analisado
-    :return: Frase "popular" em formato de lista
-    """
-    try:
-        nltk.data.find('corpora\stopwords')
-    except LookupError:
-        nltk.download('stopwords')
-    p_stopwords = set(stopwords.words('portuguese'))
-    fd = nltk.FreqDist(w.lower() for w in all_text.split() if w not in p_stopwords)
-    max_words = settings['max_words_precision']
-    if len(list(fd.keys())) >= settings['max_words_precision']:
-        for x in range(0, settings['max_words_precision']):
-            max_words = x
-        return list(fd.keys())[:max_words]
-    else:
-        for y in range(0, len(list(fd.keys()))):
-            max_words = y
-        return list(fd.keys())[:max_words]
-
-
 def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -> dict:
     """
     Analisa a pontuação de uma notícia, sendo a pontuação a probabilidade desta ser falsa ou não
@@ -91,34 +67,11 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     final_score['post']['bing'] = bing_relatives['score'] * weights['bing']
     log.info("Analisando multiplicando relatives (GOOGLE)...")
     final_score['post']['google'] = gnews_relatives['score'] * weights['google']
-    all_text = ""
-    log.info("Pegando alltext...")
-    for news in bing_relatives['relatives']:
-        try:
-            all_text += post.fixcharset(str(news['text']))
-        except Exception:  # Ignora textos que não puderam ser entendidos
-            pass
-    for news in gnews_relatives['relatives']:
-        try:
-            all_text += post.fixcharset(str(news['text']))
-        except Exception:  # Ignora textos que não puderam ser entendidos
-            pass
-    log.info("Juntando alltext...")
-    popular_words = ' '.join(alltext_score(all_text)).replace(",", "")
-    log.info("Popular Words: " + popular_words)
-    log.info("Buscando popular words (BING)...")
+    log.info("Comparando textos (BING)...")
     final_score['post']['relatives_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
-    log.info("Buscando popular words (GOOGLE)...")
+    log.info("Comparando textos (GOOGLE)...")
     final_score['post']['relatives_google_text'] = relatives_compare_text(gnews_relatives['relatives'],
                                                                           postagem['text'])
-    if len(popular_words) > 0:
-        popular_words_gnews_relatives = gnews_search.search_relatives(popular_words, postagem['domain'])['score']
-        popular_words_bing_relatives = bing_search.search_relatives(popular_words, postagem['domain'])['score']
-        final_score['post']['popular_bing'] = popular_words_bing_relatives * weights['popular_bing']
-        final_score['post']['popular_google'] = popular_words_gnews_relatives * weights['popular_google']
-    else:
-        final_score['post']['popular_bing'] = 0
-        final_score['post']['popular_google'] = 0
     final_score['post']['average_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
     if not ignore_db:
         try:
