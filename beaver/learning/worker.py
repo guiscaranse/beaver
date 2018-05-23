@@ -10,7 +10,7 @@ import beaver
 from beaver import learning
 from beaver.config import headers
 
-model = ExtraTreesClassifier()
+model = GaussianNB()
 module_path = os.path.dirname(inspect.getfile(learning))
 
 

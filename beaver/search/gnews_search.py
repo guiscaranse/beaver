@@ -28,7 +28,7 @@ def search_relatives(string, ignore_url=""):
     meta_score = 0
     gnews_results = dict(relatives=[])
     log.info("Iniciando pesquisa no Google News...")
-    json_data = "https://beavergnewsserver.now.sh/search/" + urllib.parse.quote_plus(normalize(string)) + \
+    json_data = "http://srv1.guiscaranse.ml:8087/search/" + urllib.parse.quote_plus(normalize(string)) + \
                 "?lang=" + settings['language']
     log.info("Tentando acessar: " + json_data)
     with urllib.request.urlopen(json_data) as url:
