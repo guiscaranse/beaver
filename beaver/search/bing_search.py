@@ -38,7 +38,7 @@ def search_relatives(query_str, ignore_url=""):
     for result in results:
         log.info("Analisando: " + str(result.name) + ". Token sort: " +
                  str(fuzz.token_sort_ratio(query_str, result.name)))
-        if int(fuzz.token_sort_ratio(query_str, result.name)) > 50:
+        if True:
             log.info("Achado compatível." + str(fuzz.token_sort_ratio(query_str, result.name)) + " " + result.name)
             try:  # Em caso de erros do Goose, não são relevantes quais (Variam de 404 e 500)
                 if ignore_url in result.url and ignore_url is not None:
