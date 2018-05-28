@@ -61,16 +61,16 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     log.info("Analisando relatives (GOOGLE)...")
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
     log.info("Analisando multiplicando relatives (BING)...")
-    final_score['post']['bing'] = float(bing_relatives['score']) / 100
+    final_score['post']['bing'] = round(float(bing_relatives['score']) / 100, 2)
     log.info("Analisando multiplicando relatives (GOOGLE)...")
-    final_score['post']['google'] = float(gnews_relatives['score']) / 100
+    final_score['post']['google'] = round(float(gnews_relatives['score']) / 100, 2)
     log.info("Comparando textos (BING)...")
-    final_score['post']['relatives_bing_text'] = float(
-        relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 100
+    final_score['post']['relatives_bing_text'] = round(
+        float(relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 100, 2)
     log.info("Comparando textos (GOOGLE)...")
-    final_score['post']['relatives_google_text'] = float(
-        relatives_compare_text(gnews_relatives['relatives'], postagem['text'])) / 100
-    final_score['post']['average_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
+    final_score['post']['relatives_google_text'] = round(
+        float(relatives_compare_text(gnews_relatives['relatives'], postagem['text'])) / 100, 2)
+    final_score['post']['average_score'] = round(sum(final_score['post'].values()) / float(len(final_score['post'])), 2)
     if not ignore_db:
         try:
             beaver.database.registerpost(postagem, final_score)
