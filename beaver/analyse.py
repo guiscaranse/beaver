@@ -1,16 +1,13 @@
 import os
 import sys
 
-import nltk
 import pendulum
 from logbook import Logger, StreamHandler
-from nltk.corpus import stopwords
 
 import beaver.database
 from beaver import post, text_polyglot
-from beaver.search import bing_search, gnews_search
-from beaver.config import settings, weights
 from beaver.exceptions import TimeError
+from beaver.search import bing_search, gnews_search
 from beaver.util import relatives_compare_text
 
 if "BEAVER_DEBUG" in os.environ:
@@ -64,14 +61,15 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     log.info("Analisando relatives (GOOGLE)...")
     gnews_relatives = gnews_search.search_relatives(postagem['article_title'], postagem['domain'])
     log.info("Analisando multiplicando relatives (BING)...")
-    final_score['post']['bing'] = bing_relatives['score'] * weights['bing']
+    final_score['post']['bing'] = float(bing_relatives['score']) / 100
     log.info("Analisando multiplicando relatives (GOOGLE)...")
-    final_score['post']['google'] = gnews_relatives['score'] * weights['google']
+    final_score['post']['google'] = float(gnews_relatives['score']) / 100
     log.info("Comparando textos (BING)...")
-    final_score['post']['relatives_bing_text'] = relatives_compare_text(bing_relatives['relatives'], postagem['text'])
+    final_score['post']['relatives_bing_text'] = float(
+        relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 100
     log.info("Comparando textos (GOOGLE)...")
-    final_score['post']['relatives_google_text'] = relatives_compare_text(gnews_relatives['relatives'],
-                                                                          postagem['text'])
+    final_score['post']['relatives_google_text'] = float(
+        relatives_compare_text(gnews_relatives['relatives'], postagem['text'])) / 100
     final_score['post']['average_score'] = sum(final_score['post'].values()) / float(len(final_score['post']))
     if not ignore_db:
         try:
