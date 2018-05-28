@@ -1,6 +1,8 @@
 # Pycharm
 .idea/
 
+# Testes
+teste*
 # Beaver
 *.json
 
