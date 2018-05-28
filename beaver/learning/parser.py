@@ -1,10 +1,35 @@
 import csv
 import inspect
 import os
+import matplotlib.pyplot as plt
+import numpy
+import pandas
 
 import beaver
 from beaver import learning
 from beaver.config import headers
+
+
+def describe():
+    import beaver.learning
+    module_path = os.path.dirname(inspect.getfile(beaver.learning))
+    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
+    print("Sumary: \n" + str(dataset.shape))
+    print("Head: \n" + str(dataset.head(20)))
+    print("Describe:\n" + str(dataset.describe()))
+    print(dataset.groupby('result').size())
+    print("Correlations:\n" + str(dataset.corr()))
+    pandas.plotting.scatter_matrix(dataset)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(dataset.corr(), vmin=-1, vmax=1)
+    fig.colorbar(cax)
+    ticks = numpy.arange(0, len(headers), 1)
+    ax.set_xticks(ticks)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels(headers, rotation='vertical')
+    ax.set_yticklabels(headers)
+    plt.show()
 
 
 def build_data():
