@@ -1,16 +1,17 @@
 import inspect
 import os
+import pickle
+from pathlib import Path
 
 import pandas
 from sklearn import model_selection
-from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 
 import beaver
 from beaver import learning
 from beaver.config import headers
 
-model = GaussianNB()
 module_path = os.path.dirname(inspect.getfile(learning))
 
 
@@ -25,11 +26,22 @@ def train():
     X = array[:, 0:24]  # Dados
     Y = array[:, 24]  # Resultados
     validation_size = 0.20  # Divide datasets
-    global X_train, X_validation, Y_train, Y_validation
+    global X_train, Y_train
     X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y,
                                                                                     test_size=validation_size,
                                                                                     random_state=7)
-    model.fit(X_train, Y_train)
+
+
+def fixed_model(force=False):
+    model_path = module_path + "/data/modeldump.data"
+    if Path(model_path).is_file() and force is False:
+        return pickle.load(open(model_path, 'rb'))
+    else:
+        model = GradientBoostingClassifier()
+        train()
+        model.fit(X_train, Y_train)
+        pickle.dump(model, open(model_path, 'wb'))
+        return model
 
 
 def predict(url: str) -> list:
@@ -57,7 +69,7 @@ def predict(url: str) -> list:
     for value in info.values():
         planet.append(value)
     universe.append(planet)
-    return model.predict_proba(universe)
+    return fixed_model().predict_proba(universe)
 
 
 def describe():
