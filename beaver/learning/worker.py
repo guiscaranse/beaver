@@ -32,13 +32,21 @@ def train():
                                                                                     random_state=7)
 
 
-def fixed_model(force=False):
+def fixed_model(force: bool = False) -> object:
+    """
+    Responsável de retornar um modelo compatível do scikit-learn, para evitar overfitting um dump de modelo será
+    utilizado (modeldump) caso exista, caso não exista será gerado.
+    :param force: Se deve forçar a geração de um modeldump
+    :return: Modelo do scikit-learn já treinado
+    """
     model_path = module_path + "/data/modeldump.data"
     if Path(model_path).is_file() and force is False:
         return pickle.load(open(model_path, 'rb'))
     else:
         model = GradientBoostingClassifier()
         train()
+        if Path(model_path).is_file(): # Remove se o modelo já existe (Force = true)
+            os.remove(model_path)
         model.fit(X_train, Y_train)
         pickle.dump(model, open(model_path, 'wb'))
         return model
