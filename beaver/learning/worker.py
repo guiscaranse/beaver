@@ -23,8 +23,8 @@ def train():
     # Separar dados de validação, e dados de treino
     array = dataset.values
     # Dados
-    X = array[:, 0:24]  # Dados
-    Y = array[:, 24]  # Resultados
+    X = array[:, 0:(len(headers)-1)]  # Dados
+    Y = array[:, (len(headers)-1)]  # Resultados
     validation_size = 0.20  # Divide datasets
     global X_train, Y_train
     X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y,
@@ -81,6 +81,9 @@ def predict(url: str) -> list:
 
 
 def describe():
+    """
+    Gera gráficos e informações interessantes do dataset
+    """
     import matplotlib.pyplot as plt
     module_path = os.path.dirname(inspect.getfile(learning))
     dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
@@ -93,6 +96,9 @@ def describe():
 
 
 def check_models():
+    """
+    Gera uma lista mostrando a taxa de acerto de todos os modelos compatíveis listados em "models"
+    """
     train()
     scoring = 'accuracy'
     from sklearn.linear_model import LogisticRegression
