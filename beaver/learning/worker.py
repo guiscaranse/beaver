@@ -3,6 +3,7 @@ import os
 import pickle
 from pathlib import Path
 
+import numpy
 import pandas
 from sklearn import model_selection
 from sklearn.ensemble import GradientBoostingClassifier
@@ -76,7 +77,7 @@ def predict(url: str) -> list:
     for value in info.values():
         planet.append(value)
     universe.append(planet)
-    return fixed_model().predict_proba(universe)
+    return keras_model().predict_proba(numpy.array(universe))
 
 
 def check_models():
@@ -106,27 +107,41 @@ def check_models():
         print(msg)
 
 
-def keras_test():
+def keras_model(force=False, verbose=False):
     import numpy
     from keras import Sequential
     from keras.layers import Dense
-    numpy.random.seed(7)
-    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
-    # Separar dados de validação, e dados de treino
-    array = dataset.values
-    # Dados
-    X = array[:, 0:(len(headers) - 1)]  # Dados
-    Y = array[:, (len(headers) - 1)]  # Resultados
-    model = Sequential()
-    model.add(Dense(54, input_dim=(len(headers) - 1), activation='relu'))
-    model.add(Dense(24, activation='relu'))
-    model.add(Dense(12, activation='relu'))
-    model.add(Dense(6, activation='relu'))
-    model.add(Dense(3, activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
-    # Compile model
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
-    # evaluate the model
-    scores = model.evaluate(X, Y)
-    print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+    model_path = module_path + "/data/kerasdump.data"
+    weights_path = module_path + "/data/kerasweights.h5"
+    if Path(model_path).is_file() and force is False:
+        from keras.models import model_from_json
+        loaded_model = model_from_json(open(model_path, 'r').read())
+        loaded_model.load_weights(weights_path)
+        loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return loaded_model
+    else:
+        numpy.random.seed(7)
+        dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
+        # Separar dados de validação, e dados de treino
+        array = dataset.values
+        # Dados
+        X = array[:, 0:(len(headers) - 1)]  # Dados
+        Y = array[:, (len(headers) - 1)]  # Resultados
+        model = Sequential()
+        model.add(Dense(54, input_dim=(len(headers) - 1), activation='relu'))
+        model.add(Dense(24, activation='relu'))
+        model.add(Dense(12, activation='relu'))
+        model.add(Dense(6, activation='relu'))
+        model.add(Dense(3, activation='relu'))
+        model.add(Dense(1, activation='sigmoid'))
+        # Compile model
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
+        if verbose:
+            scores = model.evaluate(X, Y)
+            print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+        model_json = model.to_json()
+        with open(model_path, "w") as json_file:
+            json_file.write(model_json)
+        model.save_weights(weights_path)
+        return model
