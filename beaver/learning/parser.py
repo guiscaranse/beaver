@@ -45,13 +45,16 @@ def build_data():
                 row_write = dict()
                 data = beaver.analyse.score(row['URL'])
                 for key in data['post'].keys():
-                    row_write[key] = data['post'][key]
+                    if key in headers:
+                        row_write[key] = data['post'][key]
                 for key in data['polyglot']['grammar'].keys():
-                    if key is not "polarity":
-                        row_write[key] = data['polyglot']['grammar'][key]
+                    if key in headers:
+                        if key is not "polarity":
+                            row_write[key] = data['polyglot']['grammar'][key]
                 if data['polyglot']['polarity'] is not 0:
-                    for key in data['polyglot']['polarity'].keys():
-                        row_write[key] = data['polyglot']['polarity'][key]
+                    if key in headers:
+                        for key in data['polyglot']['polarity'].keys():
+                            row_write[key] = data['polyglot']['polarity'][key]
                 if row['Supervisor'] == "Verdadeira":
                     row_write['result'] = 1
                 else:
