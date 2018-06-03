@@ -104,3 +104,29 @@ def check_models():
         names.append(name)
         msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
         print(msg)
+
+
+def keras_test():
+    import numpy
+    from keras import Sequential
+    from keras.layers import Dense
+    numpy.random.seed(7)
+    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
+    # Separar dados de validação, e dados de treino
+    array = dataset.values
+    # Dados
+    X = array[:, 0:(len(headers) - 1)]  # Dados
+    Y = array[:, (len(headers) - 1)]  # Resultados
+    model = Sequential()
+    model.add(Dense(54, input_dim=(len(headers) - 1), activation='relu'))
+    model.add(Dense(24, activation='relu'))
+    model.add(Dense(12, activation='relu'))
+    model.add(Dense(6, activation='relu'))
+    model.add(Dense(3, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    # Compile model
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
+    # evaluate the model
+    scores = model.evaluate(X, Y)
+    print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
