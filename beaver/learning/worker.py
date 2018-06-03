@@ -58,7 +58,6 @@ def predict(url: str) -> list:
     :param url: a URL a ser analisada
     :return: Retorna uma lista de probabilidade (1° coluna: chance de ser verdadeira, 2° coluna: chance de ser falsa)
     """
-    train()
     info = dict()
     for head in headers:
         info[head] = 0
