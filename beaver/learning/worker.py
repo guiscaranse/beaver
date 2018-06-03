@@ -23,8 +23,8 @@ def train():
     # Separar dados de validação, e dados de treino
     array = dataset.values
     # Dados
-    X = array[:, 0:(len(headers)-1)]  # Dados
-    Y = array[:, (len(headers)-1)]  # Resultados
+    X = array[:, 0:(len(headers) - 1)]  # Dados
+    Y = array[:, (len(headers) - 1)]  # Resultados
     validation_size = 0.20  # Divide datasets
     global X_train, Y_train
     X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y,
@@ -45,7 +45,7 @@ def fixed_model(force: bool = False) -> object:
     else:
         model = GradientBoostingClassifier()
         train()
-        if Path(model_path).is_file(): # Remove se o modelo já existe (Force = true)
+        if Path(model_path).is_file():  # Remove se o modelo já existe (Force = true)
             os.remove(model_path)
         model.fit(X_train, Y_train)
         pickle.dump(model, open(model_path, 'wb'))
@@ -78,21 +78,6 @@ def predict(url: str) -> list:
         planet.append(value)
     universe.append(planet)
     return fixed_model().predict_proba(universe)
-
-
-def describe():
-    """
-    Gera gráficos e informações interessantes do dataset
-    """
-    import matplotlib.pyplot as plt
-    module_path = os.path.dirname(inspect.getfile(learning))
-    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
-    print("Sumary: \n" + str(dataset.shape))
-    print("Head: \n" + str(dataset.head(20)))
-    print("Describe:\n" + str(dataset.describe()))
-    print(dataset.groupby('result').size())
-    pandas.plotting.scatter_matrix(dataset)
-    plt.show()
 
 
 def check_models():
