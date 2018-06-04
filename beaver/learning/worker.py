@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy
 import pandas
+from keras.backend import clear_session
 from sklearn import model_selection
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -115,11 +116,13 @@ def keras_model(force=False, verbose=False):
     weights_path = module_path + "/data/kerasweights.h5"
     if Path(model_path).is_file() and force is False:
         from keras.models import model_from_json
+        clear_session()
         loaded_model = model_from_json(open(model_path, 'r').read())
         loaded_model.load_weights(weights_path)
         loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         return loaded_model
     else:
+        clear_session()
         numpy.random.seed(7)
         dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
         # Separar dados de validação, e dados de treino
