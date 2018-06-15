@@ -3,7 +3,9 @@ import os
 import pickle
 from pathlib import Path
 
+import numpy
 import pandas
+from keras.backend import clear_session
 from sklearn import model_selection
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -23,8 +25,8 @@ def train():
     # Separar dados de validação, e dados de treino
     array = dataset.values
     # Dados
-    X = array[:, 0:(len(headers)-1)]  # Dados
-    Y = array[:, (len(headers)-1)]  # Resultados
+    X = array[:, 0:(len(headers) - 1)]  # Dados
+    Y = array[:, (len(headers) - 1)]  # Resultados
     validation_size = 0.20  # Divide datasets
     global X_train, Y_train
     X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y,
@@ -45,7 +47,7 @@ def fixed_model(force: bool = False) -> object:
     else:
         model = GradientBoostingClassifier()
         train()
-        if Path(model_path).is_file(): # Remove se o modelo já existe (Force = true)
+        if Path(model_path).is_file():  # Remove se o modelo já existe (Force = true)
             os.remove(model_path)
         model.fit(X_train, Y_train)
         pickle.dump(model, open(model_path, 'wb'))
@@ -58,7 +60,6 @@ def predict(url: str) -> list:
     :param url: a URL a ser analisada
     :return: Retorna uma lista de probabilidade (1° coluna: chance de ser verdadeira, 2° coluna: chance de ser falsa)
     """
-    train()
     info = dict()
     for head in headers:
         info[head] = 0
@@ -77,22 +78,7 @@ def predict(url: str) -> list:
     for value in info.values():
         planet.append(value)
     universe.append(planet)
-    return fixed_model().predict_proba(universe)
-
-
-def describe():
-    """
-    Gera gráficos e informações interessantes do dataset
-    """
-    import matplotlib.pyplot as plt
-    module_path = os.path.dirname(inspect.getfile(learning))
-    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
-    print("Sumary: \n" + str(dataset.shape))
-    print("Head: \n" + str(dataset.head(20)))
-    print("Describe:\n" + str(dataset.describe()))
-    print(dataset.groupby('result').size())
-    pandas.plotting.scatter_matrix(dataset)
-    plt.show()
+    return keras_model().predict_proba(numpy.array(universe))
 
 
 def check_models():
@@ -120,3 +106,46 @@ def check_models():
         names.append(name)
         msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
         print(msg)
+
+
+def keras_model(force=False, verbose=False):
+    import numpy
+    from keras import Sequential
+    from keras.layers import Dense
+    model_path = module_path + "/data/kerasdump.data"
+    weights_path = module_path + "/data/kerasweights.h5"
+    if Path(model_path).is_file() and force is False:
+        from keras.models import model_from_json
+        clear_session()
+        loaded_model = model_from_json(open(model_path, 'r').read())
+        loaded_model.load_weights(weights_path)
+        loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return loaded_model
+    else:
+        clear_session()
+        numpy.random.seed(7)
+        dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
+        # Separar dados de validação, e dados de treino
+        array = dataset.values
+        # Dados
+        X = array[:, 0:(len(headers) - 1)]  # Dados
+        Y = array[:, (len(headers) - 1)]  # Resultados
+        model = Sequential()
+        model.add(Dense(54, input_dim=(len(headers) - 1), activation='relu'))
+        model.add(Dense(24, activation='relu'))
+        model.add(Dense(12, activation='relu'))
+        model.add(Dense(6, activation='relu'))
+        model.add(Dense(3, activation='relu'))
+        model.add(Dense(1, activation='sigmoid'))
+        # Compile model
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
+        if verbose:
+            scores = model.evaluate(X, Y)
+            print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+        model_json = model.to_json()
+        with open(model_path, "w") as json_file:
+            json_file.write(model_json)
+        model.save_weights(weights_path)
+        return model
+
