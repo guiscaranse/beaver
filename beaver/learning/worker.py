@@ -156,3 +156,21 @@ def keras_model(force=False, verbose=False):
         model.save_weights(weights_path)
         return model
 
+
+def half_train():
+    acertos = 0
+    linhas = 0
+    import csv
+    with open(module_path + "/data/validate.csv") as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            linhas += 1
+            universe = numpy.array([row[0:(len(row) - 1)]])
+            x = universe
+            y = row[(len(row) - 1)]
+            previsao = round(keras_model().predict(x)[0][0], 0)
+            if float(previsao) == float(y):
+                print("Acertou")
+                acertos += 1
+    print("Analisados: " + str(linhas))
+    print("Acertos:" + str(acertos))
