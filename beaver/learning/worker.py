@@ -158,6 +158,9 @@ def keras_model(force=False, verbose=False):
 
 
 def half_train():
+    """
+    Código de teste de metade do dataset, é necessário dividir o dataset.csv, sendo o segundo arquivo validate.csv.
+    """
     acertos = 0
     linhas = 0
     import csv
