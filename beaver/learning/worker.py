@@ -109,6 +109,13 @@ def check_models():
 
 
 def keras_model(force=False, verbose=False):
+    """
+    Método para retornar um modelo iterativo do Keras. Se um modelo já existir, carregará os pesos e retornará um objeto
+    de modelo iterativo. Caso não exista um modelo, um será gerado.
+    :param force: se deve ou não forçar a geração de um modelo fresco
+    :param verbose: quando o verbose estiver ligado durante a criação de um modelo, mostrará a precisão do mesmo
+    :return: modelo iterativo do keras
+    """
     import numpy
     from keras import Sequential
     from keras.layers import Dense
@@ -131,11 +138,12 @@ def keras_model(force=False, verbose=False):
         X = array[:, 0:(len(headers) - 1)]  # Dados
         Y = array[:, (len(headers) - 1)]  # Resultados
         model = Sequential()
-        model.add(Dense(54, input_dim=(len(headers) - 1), activation='relu'))
-        model.add(Dense(24, activation='relu'))
-        model.add(Dense(12, activation='relu'))
-        model.add(Dense(6, activation='relu'))
-        model.add(Dense(3, activation='relu'))
+        model.add(Dense(32, input_dim=(len(headers) - 1), activation='relu'))
+        model.add(Dense(27, activation='relu'))
+        model.add(Dense(16, activation='relu'))
+        model.add(Dense(13, activation='relu'))
+        model.add(Dense(11, activation='relu'))
+        model.add(Dense(8, activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
         # Compile model
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
