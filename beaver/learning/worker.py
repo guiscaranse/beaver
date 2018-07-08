@@ -109,6 +109,13 @@ def check_models():
 
 
 def keras_model(force=False, verbose=False):
+    """
+    Método para retornar um modelo iterativo do Keras. Se um modelo já existir, carregará os pesos e retornará um objeto
+    de modelo iterativo. Caso não exista um modelo, um será gerado.
+    :param force: se deve ou não forçar a geração de um modelo fresco
+    :param verbose: quando o verbose estiver ligado durante a criação de um modelo, mostrará a precisão do mesmo
+    :return: modelo iterativo do keras
+    """
     import numpy
     from keras import Sequential
     from keras.layers import Dense
@@ -149,3 +156,24 @@ def keras_model(force=False, verbose=False):
         model.save_weights(weights_path)
         return model
 
+
+def half_train():
+    """
+    Código de teste de metade do dataset, é necessário dividir o dataset.csv, sendo o segundo arquivo validate.csv.
+    """
+    acertos = 0
+    linhas = 0
+    import csv
+    with open(module_path + "/data/validate.csv") as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            linhas += 1
+            universe = numpy.array([row[0:(len(row) - 1)]])
+            x = universe
+            y = row[(len(row) - 1)]
+            previsao = round(keras_model().predict(x)[0][0], 0)
+            if float(previsao) == float(y):
+                print("Acertou")
+                acertos += 1
+    print("Analisados: " + str(linhas))
+    print("Acertos:" + str(acertos))
