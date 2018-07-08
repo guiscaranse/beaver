@@ -1,5 +1,5 @@
 import pendulum
-from goose3 import Goose
+from newsplease import NewsPlease
 
 from beaver.config import settings
 from beaver.util import fixcharset
@@ -12,20 +12,18 @@ def extract(url):
     :return: um objeto dicionário com título do artigo, autor, domínio, data e texto do artigo
     Na ausência do texto do artigo irá ser utilizado o resumo presente na meta_description
     """
-    g = Goose({'strict': False, 'use_meta_language': True, 'target_language': settings['language'].replace("-", "_"),
-               'parser_class': 'lxml', 'enable_image_fetching': False})
     response = dict()
-    artigo = g.extract(url=url)
+    artigo = NewsPlease.from_url(url)
     response['article_title'] = fixcharset(artigo.title)
     response['author'] = artigo.authors
-    response['domain'] = artigo.domain
-    if artigo.publish_date is not None:
-        response['date'] = pendulum.parse(artigo.publish_date, tz=settings['timezone'])
+    response['domain'] = artigo.source_domain
+    if artigo.date_publish is not None:
+        response['date'] = pendulum.parse(str(artigo.date_publish).replace(" ", "T"), tz=settings['timezone'])
     else:
-        response['date'] = artigo.publish_date
-    if len(artigo.cleaned_text) > 0:
-        text = fixcharset(artigo.cleaned_text)
+        response['date'] = str(artigo.date_download).replace(" ", "T")
+    if len(artigo.text) > 0:
+        text = fixcharset(artigo.text)
     else:
-        text = fixcharset(artigo.meta_description)
+        text = fixcharset(artigo.description)
     response['text'] = text
     return response
