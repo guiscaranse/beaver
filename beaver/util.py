@@ -1,7 +1,6 @@
 import re
 import unicodedata
 
-from bs4 import BeautifulSoup
 from ftfy import fix_encoding
 from fuzzywuzzy import fuzz
 
@@ -46,7 +45,7 @@ def fixcharset(string):
     text = fix_encoding(string)
     if "�" in text:
         text = text.encode(settings['replacement_charset'], "ignore")
-    return BeautifulSoup(text).get_text()
+    return text
 
 
 def relatives_compare_text(relatives: dict, text: str) -> int:
