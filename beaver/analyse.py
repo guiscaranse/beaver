@@ -26,7 +26,8 @@ def validate(gooseobject: dict, ignore: bool) -> bool:
         diff = pendulum.now() - gooseobject['date']
         if diff.years > 0:
             if not ignore:
-                raise TimeError("Artigos de mais de um ano podem causar análises errôneas")
+                raise TimeError("Artigos com mais de um ano de publicação podem causar análises errôneas e por isso "
+                                "não são analisadas")
     return True
 
 

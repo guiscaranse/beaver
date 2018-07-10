@@ -63,8 +63,10 @@ def extract(url):
             response['date'] = artigo.publish_date
         if len(artigo.cleaned_text) > 0:
             text = fixcharset(artigo.cleaned_text)
-        else:
+        elif len(artigo.meta_description) > 0:
             text = fixcharset(artigo.meta_description)
+        else:
+            raise NoTextDataFound("Não existem textos suficientes para análise.")
         response['text'] = text
         log.info("Sucesso (Goose3)")
         pass
