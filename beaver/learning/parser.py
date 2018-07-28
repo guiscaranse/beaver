@@ -10,7 +10,7 @@ from beaver import learning
 from beaver.config import headers
 
 
-def describe():
+def describe(gen_csv=False, gen_graphics=True):
     import beaver.learning
     module_path = os.path.dirname(inspect.getfile(beaver.learning))
     dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
@@ -19,17 +19,21 @@ def describe():
     print("Describe:\n" + str(dataset.describe()))
     print(dataset.groupby('result').size())
     print("Correlations:\n" + str(dataset.corr()))
-    pandas.plotting.scatter_matrix(dataset)
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    cax = ax.matshow(dataset.corr(), vmin=-1, vmax=1)
-    fig.colorbar(cax)
-    ticks = numpy.arange(0, len(headers), 1)
-    ax.set_xticks(ticks)
-    ax.set_yticks(ticks)
-    ax.set_xticklabels(headers, rotation='vertical')
-    ax.set_yticklabels(headers)
-    plt.show()
+    if gen_csv:
+        dataset.describe().to_csv("describe.csv")
+        dataset.corr().to_csv("corr.csv")
+    if gen_graphics:
+        pandas.plotting.scatter_matrix(dataset)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        cax = ax.matshow(dataset.corr(), vmin=-1, vmax=1)
+        fig.colorbar(cax)
+        ticks = numpy.arange(0, len(headers), 1)
+        ax.set_xticks(ticks)
+        ax.set_yticks(ticks)
+        ax.set_xticklabels(headers, rotation='vertical')
+        ax.set_yticklabels(headers)
+        plt.show()
 
 
 def build_data():

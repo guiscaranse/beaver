@@ -11,12 +11,10 @@ fuzzywuzzy = {extras = ["speedup"]}
 "goose3" = "*"
 ftfy = "*"
 pendulum = "*"
-pytrends = "*"
 nltk = "*"
 py-ms-cognitive = {git = "https://github.com/guiscaranse/py-ms-cognitive.git", ref = "master"}
-halo = "*"
 tinydb = "*"
-logbook = "*"
+Logbook = "*"
 polyglot = {git = "https://github.com/aboSamoor/polyglot.git"}
 scipy = "*"
 numpy = "*"
@@ -25,13 +23,14 @@ sklearn = "*"
 matplotlib = "*"
 pytest = "*"
 tensorflow = "*"
-keras = "*"
+Keras = "*"
+news-please = "*"
 
 
 [dev-packages]
 
 "pycld2" = {path = ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"}
-pyicu = {path = ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"}
+PyICU = {path = ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"}
 
 
 [requires]

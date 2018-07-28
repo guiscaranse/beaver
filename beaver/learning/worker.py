@@ -138,9 +138,9 @@ def keras_model(force=False, verbose=False):
         X = array[:, 0:(len(headers) - 1)]  # Dados
         Y = array[:, (len(headers) - 1)]  # Resultados
         model = Sequential()
-        model.add(Dense(54, input_dim=(len(headers) - 1), activation='relu'))
-        model.add(Dense(24, activation='relu'))
-        model.add(Dense(12, activation='relu'))
+        model.add(Dense(60, input_dim=(len(headers) - 1), activation='relu'))
+        model.add(Dense(32, activation='relu'))
+        model.add(Dense(16, activation='relu'))
         model.add(Dense(6, activation='relu'))
         model.add(Dense(3, activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
