@@ -6,7 +6,7 @@ from logbook import Logger, StreamHandler
 
 import beaver.database
 from beaver import post, text_polyglot
-from beaver.exceptions import TimeError
+from beaver.exceptions import TimeError, InsufficientText
 from beaver.search import bing_search, gnews_search
 from beaver.util import relatives_compare_text
 
@@ -64,6 +64,11 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     final_score['post']['bing'] = round(float(bing_relatives['score']) / 1, 2)
     log.info("Analisando multiplicando relatives (GOOGLE)...")
     final_score['post']['google'] = round(float(gnews_relatives['score']) / 1, 2)
+    if len(str(postagem['text'])) <= 170:
+        raise InsufficientText("Texto menor de 170 caracteres é insuficiente de ser analisado. " +
+                               postagem['domain'])
+    else:
+        final_score['post']['length'] = len(str(postagem['text']))
     log.info("Comparando textos (BING)...")
     final_score['post']['relatives_bing_text'] = round(
         float(relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 1, 2)

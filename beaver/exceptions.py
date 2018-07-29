@@ -14,3 +14,9 @@ class NoTextDataFound(BrokenPipeError):
     def __init__(self, message, *args):
         self.message = message
         super(NoTextDataFound, self).__init__(message, *args)
+
+
+class InsufficientText(BrokenPipeError):
+    def __init__(self, message, *args):
+        self.message = message
+        super(InsufficientText, self).__init__(message, *args)
