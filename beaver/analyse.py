@@ -47,6 +47,7 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
             log.info("Encontrado correspondência de Domínio em BD")
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
+            log.info("Dados: " + str(objeto))
             return objeto
 
     final_score['polyglot'] = dict(grammar=text_polyglot.gramatica(postagem['text']),
@@ -82,4 +83,5 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
             beaver.database.registerpost(postagem, final_score)
         except Exception:
             pass
+    log.info("Dados: " + str(final_score))
     return final_score
