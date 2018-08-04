@@ -73,6 +73,9 @@ def predict(url: str) -> list:
     if data['polyglot']['polarity'] is not 0:
         for key in data['polyglot']['polarity'].keys():
             info[key] = data['polyglot']['polarity'][key]
+    for key in data['other'].keys():
+        if key in headers:
+            info[key] = data['other'][key]
     planet = []
     universe = []
     for value in info.values():
