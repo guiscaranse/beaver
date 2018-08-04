@@ -51,6 +51,7 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
 
     final_score['polyglot'] = dict(grammar=text_polyglot.gramatica(postagem['text']),
                                    polarity=text_polyglot.polaridade(postagem['text']))
+    final_score['other'] = dict(length=0)
     log.info("Analisando '" + postagem['article_title'] + "'")
     log.info("Validando postagem...")
     validate(postagem, ignore_validations)
@@ -68,7 +69,7 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
         raise InsufficientText("Texto menor de 170 caracteres é insuficiente de ser analisado. " +
                                postagem['domain'])
     else:
-        final_score['post']['length'] = len(str(postagem['text']).rsplit(" "))
+        final_score['other']['length'] = len(str(postagem['text']).rsplit(" "))
     log.info("Comparando textos (BING)...")
     final_score['post']['relatives_bing_text'] = round(
         float(relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 1, 2)
