@@ -68,7 +68,7 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
         raise InsufficientText("Texto menor de 170 caracteres é insuficiente de ser analisado. " +
                                postagem['domain'])
     else:
-        final_score['post']['length'] = len(str(postagem['text']))
+        final_score['post']['length'] = len(str(postagem['text']).rsplit(" "))
     log.info("Comparando textos (BING)...")
     final_score['post']['relatives_bing_text'] = round(
         float(relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 1, 2)
