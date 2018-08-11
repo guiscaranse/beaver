@@ -2,8 +2,7 @@
 .idea/
 
 # Serial
-*.data
-
+*.h5.*
 # Testes
 teste*
 # Beaver

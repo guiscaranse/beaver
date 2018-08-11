@@ -73,6 +73,9 @@ def predict(url: str) -> list:
     if data['polyglot']['polarity'] is not 0:
         for key in data['polyglot']['polarity'].keys():
             info[key] = data['polyglot']['polarity'][key]
+    for key in data['other'].keys():
+        if key in headers:
+            info[key] = data['other'][key]
     planet = []
     universe = []
     for value in info.values():
@@ -108,6 +111,11 @@ def check_models():
         print(msg)
 
 
+def evaluate(keras_model, X, Y):
+    scores = keras_model.evaluate(X, Y)
+    return "%s: %.2f%%" % (keras_model.metrics_names[1], scores[1] * 100)
+
+
 def keras_model(force=False, verbose=False):
     """
     Método para retornar um modelo iterativo do Keras. Se um modelo já existir, carregará os pesos e retornará um objeto
@@ -116,7 +124,6 @@ def keras_model(force=False, verbose=False):
     :param verbose: quando o verbose estiver ligado durante a criação de um modelo, mostrará a precisão do mesmo
     :return: modelo iterativo do keras
     """
-    import numpy
     from keras import Sequential
     from keras.layers import Dense
     model_path = module_path + "/data/kerasdump.data"
@@ -130,26 +137,25 @@ def keras_model(force=False, verbose=False):
         return loaded_model
     else:
         clear_session()
-        numpy.random.seed(7)
         dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
         # Separar dados de validação, e dados de treino
         array = dataset.values
         # Dados
         X = array[:, 0:(len(headers) - 1)]  # Dados
         Y = array[:, (len(headers) - 1)]  # Resultados
+        numpy.random.seed(491826658)
         model = Sequential()
-        model.add(Dense(60, input_dim=(len(headers) - 1), activation='relu'))
-        model.add(Dense(32, activation='relu'))
-        model.add(Dense(16, activation='relu'))
-        model.add(Dense(6, activation='relu'))
-        model.add(Dense(3, activation='relu'))
+        model.add(Dense(51, input_dim=(len(headers) - 1), activation='relu'))
+        model.add(Dense(30, activation='relu'))
+        model.add(Dense(17, activation='relu'))
+        model.add(Dense(7, activation='relu'))
+        model.add(Dense(2, activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
         # Compile model
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
+        model.fit(X, Y, epochs=150, batch_size=10, verbose=0, shuffle=True)
         if verbose:
-            scores = model.evaluate(X, Y)
-            print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+            print(evaluate(model, X, Y))
         model_json = model.to_json()
         with open(model_path, "w") as json_file:
             json_file.write(model_json)

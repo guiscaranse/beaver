@@ -59,6 +59,9 @@ def build_data():
                     if key in headers:
                         for key in data['polyglot']['polarity'].keys():
                             row_write[key] = data['polyglot']['polarity'][key]
+                for key in data['other'].keys():
+                    if key in headers:
+                        row_write[key] = data['other'][key]
                 if row['Supervisor'] == "Verdadeira":
                     row_write['result'] = 1
                 else:

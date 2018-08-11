@@ -14,7 +14,7 @@ pendulum = "*"
 nltk = "*"
 py-ms-cognitive = {git = "https://github.com/guiscaranse/py-ms-cognitive.git", ref = "master"}
 tinydb = "*"
-Logbook = "*"
+logbook = "*"
 polyglot = {git = "https://github.com/aboSamoor/polyglot.git"}
 scipy = "*"
 numpy = "*"
@@ -22,15 +22,15 @@ pandas = "*"
 sklearn = "*"
 matplotlib = "*"
 pytest = "*"
-tensorflow = "*"
-Keras = "*"
+keras = "*"
 news-please = "*"
+tensorflow = "*"
 
 
 [dev-packages]
 
 "pycld2" = {path = ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"}
-PyICU = {path = ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"}
+pyicu = {path = ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"}
 
 
 [requires]

@@ -6,7 +6,7 @@ from logbook import Logger, StreamHandler
 
 import beaver.database
 from beaver import post, text_polyglot
-from beaver.exceptions import TimeError
+from beaver.exceptions import TimeError, InsufficientText
 from beaver.search import bing_search, gnews_search
 from beaver.util import relatives_compare_text
 
@@ -47,10 +47,12 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
             log.info("Encontrado correspondência de Domínio em BD")
             objeto = beaver.database.checkpost(postagem['article_title'] + postagem['domain'])
             objeto['domain_score'] = beaver.database.checkdomains(postagem['domain'])
+            log.info("Dados: " + str(objeto))
             return objeto
 
     final_score['polyglot'] = dict(grammar=text_polyglot.gramatica(postagem['text']),
                                    polarity=text_polyglot.polaridade(postagem['text']))
+    final_score['other'] = dict(length=0)
     log.info("Analisando '" + postagem['article_title'] + "'")
     log.info("Validando postagem...")
     validate(postagem, ignore_validations)
@@ -64,6 +66,11 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     final_score['post']['bing'] = round(float(bing_relatives['score']) / 1, 2)
     log.info("Analisando multiplicando relatives (GOOGLE)...")
     final_score['post']['google'] = round(float(gnews_relatives['score']) / 1, 2)
+    if len(str(postagem['text'])) <= 170:
+        raise InsufficientText("Texto menor de 170 caracteres é insuficiente de ser analisado. " +
+                               postagem['domain'])
+    else:
+        final_score['other']['length'] = len(str(postagem['text']).rsplit(" "))
     log.info("Comparando textos (BING)...")
     final_score['post']['relatives_bing_text'] = round(
         float(relatives_compare_text(bing_relatives['relatives'], postagem['text'])) / 1, 2)
@@ -76,4 +83,5 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
             beaver.database.registerpost(postagem, final_score)
         except Exception:
             pass
+    log.info("Dados: " + str(final_score))
     return final_score
