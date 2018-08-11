@@ -7,9 +7,10 @@ from http.client import RemoteDisconnected
 import pendulum
 from logbook import Logger, StreamHandler
 from newsplease import NewsPlease
+from polyglot.detect import Detector
 
 from beaver.config import settings
-from beaver.exceptions import NoTextDataFound
+from beaver.exceptions import NoTextDataFound, IncompatibleLanguage
 from beaver.util import fixcharset
 
 if "BEAVER_DEBUG" in os.environ:
@@ -70,4 +71,7 @@ def extract(url):
         response['text'] = text
         log.info("Sucesso (Goose3)")
         pass
+    detector = Detector(response['text'])
+    if detector.language.code not in settings['language']:
+        raise IncompatibleLanguage("Língua do artigo não é uma das línguas autorizadas.")
     return response
