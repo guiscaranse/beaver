@@ -3,10 +3,12 @@ import sys
 
 import pendulum
 from logbook import Logger, StreamHandler
+from polyglot.detect import Detector
 
 import beaver.database
 from beaver import post, text_polyglot
-from beaver.exceptions import TimeError, InsufficientText
+from beaver.config import settings
+from beaver.exceptions import TimeError, InsufficientText, IncompatibleLanguage
 from beaver.search import bing_search, gnews_search
 from beaver.util import relatives_compare_text
 
