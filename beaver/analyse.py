@@ -42,6 +42,9 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     """
     final_score = dict(domain_score={}, post={}, polyglot={})
     postagem = post.extract(url)
+    detector = Detector(postagem['text'])
+    if detector.language.code not in settings['language']:
+        raise IncompatibleLanguage("Língua do artigo não é uma das línguas autorizadas.")
     if not ignore_db:
         if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])) > 0:
             log.info("Encontrado correspondência de Domínio em BD")

@@ -71,7 +71,4 @@ def extract(url):
         response['text'] = text
         log.info("Sucesso (Goose3)")
         pass
-    detector = Detector(response['text'])
-    if detector.language.code not in settings['language']:
-        raise IncompatibleLanguage("Língua do artigo não é uma das línguas autorizadas.")
     return response
