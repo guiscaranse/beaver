@@ -3,10 +3,12 @@ import sys
 
 import pendulum
 from logbook import Logger, StreamHandler
+from polyglot.detect import Detector
 
 import beaver.database
 from beaver import post, text_polyglot
-from beaver.exceptions import TimeError, InsufficientText
+from beaver.config import settings
+from beaver.exceptions import TimeError, InsufficientText, IncompatibleLanguage
 from beaver.search import bing_search, gnews_search
 from beaver.util import relatives_compare_text
 
@@ -26,8 +28,7 @@ def validate(gooseobject: dict, ignore: bool) -> bool:
         diff = pendulum.now() - gooseobject['date']
         if diff.years > 0:
             if not ignore:
-                raise TimeError("Artigos com mais de um ano de publicação podem causar análises errôneas e por isso "
-                                "não são analisadas")
+                raise TimeError("É possível que este artigo seja antigo, ou não foi possível validar a sua data.")
     return True
 
 
@@ -42,6 +43,9 @@ def score(url: str, ignore_validations: bool = False, ignore_db: bool = False) -
     """
     final_score = dict(domain_score={}, post={}, polyglot={})
     postagem = post.extract(url)
+    detector = Detector(postagem['text'])
+    if detector.language.code not in settings['language']:
+        raise IncompatibleLanguage("Língua do artigo não é uma das línguas autorizadas.")
     if not ignore_db:
         if len(beaver.database.checkpost(postagem['article_title'] + postagem['domain'])) > 0:
             log.info("Encontrado correspondência de Domínio em BD")

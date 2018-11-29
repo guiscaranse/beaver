@@ -145,10 +145,10 @@ def keras_model(force=False, verbose=False):
         Y = array[:, (len(headers) - 1)]  # Resultados
         numpy.random.seed(491826658)
         model = Sequential()
-        model.add(Dense(51, input_dim=(len(headers) - 1), activation='relu'))
-        model.add(Dense(30, activation='relu'))
+        model.add(Dense(52, input_dim=(len(headers) - 1), activation='relu'))
+        model.add(Dense(29, activation='relu'))
         model.add(Dense(17, activation='relu'))
-        model.add(Dense(7, activation='relu'))
+        model.add(Dense(5, activation='relu'))
         model.add(Dense(2, activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
         # Compile model
