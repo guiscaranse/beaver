@@ -5,7 +5,9 @@ from pathlib import Path
 import numpy
 import pandas
 from keras.backend import clear_session
+from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn import model_selection
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 import beaver
 from beaver import learning
@@ -66,7 +68,7 @@ def evaluate(keras_model, X, Y):
     return "%s: %.2f%%" % (keras_model.metrics_names[1], scores[1] * 100)
 
 
-def keras_model(force=False, verbose=False):
+def keras_model(force=True, verbose=False):
     """
     Método para retornar um modelo iterativo do Keras. Se um modelo já existir, carregará os pesos e retornará um objeto
     de modelo iterativo. Caso não exista um modelo, um será gerado.
@@ -93,7 +95,6 @@ def keras_model(force=False, verbose=False):
         # Dados
         X = array[:, 0:(len(headers) - 1)]  # Dados
         Y = array[:, (len(headers) - 1)]  # Resultados
-        numpy.random.seed(491826658)
         model = Sequential()
         model.add(Dense(52, input_dim=(len(headers) - 1), activation='relu'))
         model.add(Dense(29, activation='relu'))
@@ -103,11 +104,22 @@ def keras_model(force=False, verbose=False):
         model.add(Dense(1, activation='sigmoid'))
         # Compile model
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(X, Y, epochs=150, batch_size=10, verbose=0, shuffle=True)
-        if verbose:
-            print(evaluate(model, X, Y))
-        model_json = model.to_json()
-        with open(model_path, "w") as json_file:
-            json_file.write(model_json)
-        model.save_weights(weights_path)
         return model
+
+
+def kfolder():
+    # seed
+    seed = numpy.random.seed()
+    # load pima indians dataset
+    dataset = pandas.read_csv(module_path + "/data/dataset.csv", names=headers)
+    # Separar dados de validação, e dados de treino
+    array = dataset.values
+    # Dados
+    X = array[:, 0:(len(headers) - 1)]  # Dados
+    Y = array[:, (len(headers) - 1)]  # Resultados
+    # create model
+    model = KerasClassifier(build_fn=keras_model, epochs=150, batch_size=10, verbose=0)
+    # evaluate using 10-fold cross validation
+    kfold = StratifiedKFold(n_splits=2, shuffle=True, random_state=seed)
+    results = cross_val_score(model, X, Y, cv=kfold)
+    print(results.mean())

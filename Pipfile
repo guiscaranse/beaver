@@ -25,12 +25,8 @@ pytest = "*"
 keras = "*"
 news-please = "*"
 tensorflow = "*"
-
-
-[dev-packages]
-
-"pycld2" = {path = ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"}
-pyicu = {path = ".\\PyICU-2.0.3-cp36-cp36m-win_amd64.whl"}
+"6f98160" = {path = ".\\PyICU-2.2-cp36-cp36m-win_amd64.whl"}
+"653ecd9" = {path = ".\\pycld2-0.31-cp36-cp36m-win_amd64.whl"}
 
 
 [requires]
