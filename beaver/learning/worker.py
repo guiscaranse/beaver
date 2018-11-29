@@ -1,14 +1,11 @@
 import inspect
 import os
-import pickle
 from pathlib import Path
 
 import numpy
 import pandas
 from keras.backend import clear_session
 from sklearn import model_selection
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.naive_bayes import GaussianNB
 
 import beaver
 from beaver import learning
@@ -32,26 +29,6 @@ def train():
     X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y,
                                                                                     test_size=validation_size,
                                                                                     random_state=7)
-
-
-def fixed_model(force: bool = False) -> object:
-    """
-    Responsável de retornar um modelo compatível do scikit-learn, para evitar overfitting um dump de modelo será
-    utilizado (modeldump) caso exista, caso não exista será gerado.
-    :param force: Se deve forçar a geração de um modeldump
-    :return: Modelo do scikit-learn já treinado
-    """
-    model_path = module_path + "/data/modeldump.data"
-    if Path(model_path).is_file() and force is False:
-        return pickle.load(open(model_path, 'rb'))
-    else:
-        model = GradientBoostingClassifier()
-        train()
-        if Path(model_path).is_file():  # Remove se o modelo já existe (Force = true)
-            os.remove(model_path)
-        model.fit(X_train, Y_train)
-        pickle.dump(model, open(model_path, 'wb'))
-        return model
 
 
 def predict(url: str) -> list:
@@ -82,33 +59,6 @@ def predict(url: str) -> list:
         planet.append(value)
     universe.append(planet)
     return keras_model().predict_proba(numpy.array(universe))
-
-
-def check_models():
-    """
-    Gera uma lista mostrando a taxa de acerto de todos os modelos compatíveis listados em "models"
-    """
-    train()
-    scoring = 'accuracy'
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.ensemble import ExtraTreesClassifier
-    from sklearn.ensemble import GradientBoostingClassifier
-    from sklearn.svm import SVC
-    from sklearn.neighbors import KNeighborsClassifier
-    models = [('LR', LogisticRegression()), ('KNN', KNeighborsClassifier()),
-              ('CART', DecisionTreeClassifier()), ('NB', GaussianNB()), ('SVM', SVC()),
-              ("ETC", ExtraTreesClassifier()), ("GBC", GradientBoostingClassifier())]
-    # evaluate each model in turn
-    results = []
-    names = []
-    for name, modelt in models:
-        kfold = model_selection.KFold(n_splits=10, random_state=7)
-        cv_results = model_selection.cross_val_score(modelt, X_train, Y_train, cv=kfold, scoring=scoring)
-        results.append(cv_results)
-        names.append(name)
-        msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-        print(msg)
 
 
 def evaluate(keras_model, X, Y):
@@ -161,25 +111,3 @@ def keras_model(force=False, verbose=False):
             json_file.write(model_json)
         model.save_weights(weights_path)
         return model
-
-
-def half_train():
-    """
-    Código de teste de metade do dataset, é necessário dividir o dataset.csv, sendo o segundo arquivo validate.csv.
-    """
-    acertos = 0
-    linhas = 0
-    import csv
-    with open(module_path + "/data/validate.csv") as csvfile:
-        readCSV = csv.reader(csvfile, delimiter=',')
-        for row in readCSV:
-            linhas += 1
-            universe = numpy.array([row[0:(len(row) - 1)]])
-            x = universe
-            y = row[(len(row) - 1)]
-            previsao = round(keras_model().predict(x)[0][0], 0)
-            if float(previsao) == float(y):
-                print("Acertou")
-                acertos += 1
-    print("Analisados: " + str(linhas))
-    print("Acertos:" + str(acertos))
