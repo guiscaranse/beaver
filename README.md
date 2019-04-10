@@ -1,6 +1,6 @@
 # Beaver
 
-## Este repositório foi descontinuado, o novo repositório pode ser encontrado em [verifique.me](https://github.com/verifiqueme/core)
+>Este repositório foi descontinuado, o novo repositório pode ser encontrado em [verifique.me](https://github.com/verifiqueme/)
 
 *Extração e análise de artigos da internet*
 
