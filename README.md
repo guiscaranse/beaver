@@ -1,5 +1,7 @@
 # Beaver
 
+## Este repositório foi descontinuado, o novo repositório pode ser encontrado em [verifique.me](https://github.com/verifiqueme/core)
+
 *Extração e análise de artigos da internet*
 
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/guiscaranse/beaver/blob/master/LICENSE)
